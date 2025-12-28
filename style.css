@@ -2,11 +2,10 @@
     --win-bg: #fce4ec; 
     --win-white: #ffffff;
     --win-shadow: #d8a7b1;
-    /* Soft Deep Brown instead of Black */
-    --win-shadow-deep: #5d4037; 
+    --win-shadow-deep: #5d4037; /* Deep Cocoa Brown */
     --accent-pink: #ffb7c5;
     --desktop-mint: #e0f2f1;
-    --tool-size: 36px; /* Larger size for better aesthetics */
+    --tool-size: 36px;
 }
 
 body {
@@ -15,10 +14,13 @@ body {
     background-size: 30px 30px;
     font-family: 'Tahoma', 'Arial', sans-serif;
     margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
     overflow: hidden;
 }
 
-.desktop { display: flex; justify-content: center; align-items: center; height: 100vh; }
 .window-container { position: relative; padding-top: 30px; }
 
 /* Decorative Ears */
@@ -40,7 +42,7 @@ body {
     border: 2px solid var(--win-white);
     outline: 1px solid var(--win-shadow-deep);
     box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
-    width: 860px;
+    width: fit-content; /* FIXED: window now hugs content perfectly */
     display: flex;
     flex-direction: column;
     padding: 2px;
@@ -59,7 +61,6 @@ body {
 .menu-bar { font-size: 12px; padding: 2px 0; display: flex; border-bottom: 1px solid var(--win-shadow); margin-bottom: 2px; }
 .menu-item { padding: 2px 12px; cursor: pointer; position: relative; color: var(--win-shadow-deep); }
 
-/* Top Bar Controls */
 .top-bar-controls {
     background-color: var(--win-bg);
     padding: 8px;
@@ -88,8 +89,12 @@ input[type="range"]::-webkit-slider-thumb {
     margin-top: -9px;
 }
 
-/* --- THE CHUNKY SIDEBAR --- */
-.main-content { display: flex; padding: 15px; gap: 15px; }
+/* --- THE MAIN CONTENT AREA --- */
+.main-content { 
+    display: flex; 
+    padding: 15px; 
+    gap: 15px; 
+}
 
 .sidebar-controls { display: flex; flex-direction: column; width: 80px; }
 
@@ -109,14 +114,13 @@ input[type="range"]::-webkit-slider-thumb {
 .tool {
     background-color: var(--win-bg);
     display: flex; justify-content: center; align-items: center; 
-    font-size: 22px; /* Bigger icons */
+    font-size: 22px; 
     cursor: pointer;
     border: 1px solid var(--win-bg);
     box-shadow: inset 1.5px 1.5px 0px var(--win-white), 1.5px 1.5px 0px var(--win-shadow-deep);
 }
 
 .tool.active {
-    /* Softer Dither Pattern */
     background-image: radial-gradient(rgba(255,255,255,0.7) 25%, transparent 25%), 
                       radial-gradient(rgba(255,255,255,0.7) 25%, transparent 25%);
     background-position: 0 0, 1px 1px;
@@ -126,9 +130,9 @@ input[type="range"]::-webkit-slider-thumb {
     padding-top: 2px; padding-left: 2px;
 }
 
-/* Canvas Area */
+/* CANVAS BORDER FIX */
 .canvas-wrapper {
-    flex-grow: 1;
+    flex-grow: 0; /* FIXED: don't expand past content */
     background-color: var(--win-shadow);
     border: 1px solid var(--win-white);
     box-shadow: inset 2px 2px 0px var(--win-shadow-deep), inset 3px 3px 0px rgba(0,0,0,0.1);
@@ -138,7 +142,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 canvas { display: block; image-rendering: pixelated; background: white; cursor: crosshair; }
 
-/* Palette & Footer */
+/* Palette Area */
 .footer { display: flex; padding: 12px; gap: 15px; border-top: 1px solid var(--win-shadow); }
 
 .current-colors-frame {
@@ -158,7 +162,6 @@ canvas { display: block; image-rendering: pixelated; background: white; cursor: 
     box-shadow: inset 1px 1px 0px var(--win-white);
 }
 
-/* Status Bar */
 .status-bar {
     height: 28px; font-size: 12px; padding: 0 10px; line-height: 28px; 
     color: var(--win-shadow-deep);
@@ -167,7 +170,6 @@ canvas { display: block; image-rendering: pixelated; background: white; cursor: 
     background: var(--win-bg);
 }
 
-/* Dropdowns */
 .dropdown {
     display: none; position: absolute; top: 100%; left: 0; z-index: 100;
     background: var(--win-bg); border: 1px solid var(--win-shadow-deep);
