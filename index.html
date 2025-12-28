@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meow Paint - v98.cat</title>
-    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="desktop">
     <div class="window-container">
+        <!-- Decorative Cat Ears -->
         <div class="ear left"></div>
         <div class="ear right"></div>
         
         <div class="window">
+            <!-- Title Bar -->
             <div class="title-bar">
                 <div class="title-text">🐾 untitled - Meow Paint</div>
             </div>
@@ -51,12 +52,12 @@
                     <div class="menu-item">
                         <span>Help</span>
                         <div class="dropdown">
-                            <div class="dropdown-item" onclick="alert('Meow Paint v98.cat\nBuilt with Love & Kittens')">About</div>
+                            <div class="dropdown-item" onclick="alert('Meow Paint v98.cat\nReplicated with Vibe Coding')">About</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2. NEW: Top Bar Controls (Krita Style) -->
+                <!-- 2. Top Tool Settings (Krita Style) -->
                 <div class="top-bar-controls">
                     <div class="horizontal-tool-settings">
                         <span class="options-label">Size: <span id="size-value">5</span>px</span>
@@ -64,18 +65,20 @@
                     </div>
                 </div>
 
-                <!-- 3. Main Content (Sidebar + Canvas) -->
+                <!-- 3. Main Workspace -->
                 <div class="main-content">
                     <div class="sidebar-controls">
-                        <div class="toolbar" id="toolbar">
-                            <div class="tool active" data-tool="pencil" title="Pencil">✏️</div>
-                            <div class="tool" data-tool="eraser" title="Paw Eraser">🐾</div>
-                            <div class="tool" data-tool="brush" title="Tail Brush">🖌️</div>
-                            <div class="tool" data-tool="fill" title="Milk Bucket">🥣</div>
-                            <div class="tool" data-tool="line" title="Yarn Line">🧶</div>
-                            <div class="tool" data-tool="rect" title="Cardboard Box">📦</div>
-                            <div class="tool" data-tool="circle" title="Ball of Fluff">◯</div>
-                            <div class="tool" data-tool="stamp" title="Cat Stamp">🐱</div>
+                        <div class="toolbar-frame">
+                            <div class="toolbar" id="toolbar">
+                                <div class="tool active" data-tool="pencil" title="Pencil">✏️</div>
+                                <div class="tool" data-tool="eraser" title="Paw Eraser">🐾</div>
+                                <div class="tool" data-tool="brush" title="Tail Brush">🖌️</div>
+                                <div class="tool" data-tool="fill" title="Milk Bucket">🥣</div>
+                                <div class="tool" data-tool="line" title="Yarn Line">🧶</div>
+                                <div class="tool" data-tool="rect" title="Cardboard Box">📦</div>
+                                <div class="tool" data-tool="circle" title="Ball of Fluff">◯</div>
+                                <div class="tool" data-tool="stamp" title="Cat Stamp">🐱</div>
+                            </div>
                         </div>
                     </div>
 
@@ -84,14 +87,20 @@
                     </div>
                 </div>
 
+                <!-- 4. Palette -->
                 <div class="footer">
-                    <div class="current-colors">
-                        <div id="bg-color-preview"></div>
-                        <div id="fg-color-preview"></div>
+                    <div class="current-colors-frame">
+                        <div class="current-colors">
+                            <div id="bg-color-preview"></div>
+                            <div id="fg-color-preview"></div>
+                        </div>
                     </div>
-                    <div class="palette" id="palette"></div>
+                    <div class="palette-frame">
+                        <div class="palette" id="palette"></div>
+                    </div>
                 </div>
 
+                <!-- 5. Status Bar -->
                 <div class="status-bar" id="status-bar">
                     Mew! Ready to paint?
                 </div>
