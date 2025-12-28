@@ -1,6 +1,8 @@
 
 # Meow Paint - v1
 
+https://meow-paint-v1.netlify.app/
+
 A cozy, cat-themed recreation of the classic Windows 98 Paint interface.
 
 This project was created through a process of "vibe coding"—collaborating with Google AI Studio to explore the technical layout of 90s software while injecting my own personal artistic style.
