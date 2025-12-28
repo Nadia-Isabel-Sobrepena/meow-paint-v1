@@ -14,12 +14,11 @@ let startX, startY, snapshot;
 
 // --- UNDO SYSTEM ---
 let undoStack = [];
-const maxHistory = 20; // Keep the last 20 steps to save memory
+const maxHistory = 20;
 
 function saveHistory() {
-    // Save current canvas state to the stack
     if (undoStack.length >= maxHistory) {
-        undoStack.shift(); // Remove oldest if limit reached
+        undoStack.shift();
     }
     undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
 }
@@ -34,14 +33,69 @@ function undo() {
     }
 }
 
-// Keyboard Shortcut: Ctrl + Z
 window.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
-        e.preventDefault(); // Stop browser from doing its own thing
+        e.preventDefault();
         undo();
     }
 });
-// -------------------
+
+// --- FLOOD FILL LOGIC ---
+function hexToRgba(hex) {
+    // Converts #ffffff to [255, 255, 255, 255]
+    let r = parseInt(hex.slice(1, 3), 16);
+    let g = parseInt(hex.slice(3, 5), 16);
+    let b = parseInt(hex.slice(5, 7), 16);
+    return [r, g, b, 255];
+}
+
+function floodFill(startX, startY, fillColor) {
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+    const width = canvas.width;
+    const height = canvas.height;
+
+    // Get the color of the pixel we clicked on
+    const startPos = (startY * width + startX) * 4;
+    const startR = data[startPos];
+    const startG = data[startPos + 1];
+    const startB = data[startPos + 2];
+    const startA = data[startPos + 3];
+
+    // If we're clicking on the same color as the fill color, stop (avoid infinite loop)
+    if (startR === fillColor[0] && startG === fillColor[1] && startB === fillColor[2] && startA === fillColor[3]) {
+        return;
+    }
+
+    // Stack-based fill algorithm
+    const pixelStack = [[startX, startY]];
+
+    while (pixelStack.length > 0) {
+        const [x, y] = pixelStack.pop();
+        const currentPos = (y * width + x) * 4;
+
+        // Check if current pixel matches start color
+        if (data[currentPos] === startR &&
+            data[currentPos + 1] === startG &&
+            data[currentPos + 2] === startB &&
+            data[currentPos + 3] === startA) {
+
+            // Color the pixel
+            data[currentPos] = fillColor[0];
+            data[currentPos + 1] = fillColor[1];
+            data[currentPos + 2] = fillColor[2];
+            data[currentPos + 3] = fillColor[3];
+
+            // Add neighbors to stack (checking boundaries)
+            if (x > 0) pixelStack.push([x - 1, y]);
+            if (x < width - 1) pixelStack.push([x + 1, y]);
+            if (y > 0) pixelStack.push([x, y - 1]);
+            if (y < height - 1) pixelStack.push([x, y + 1]);
+        }
+    }
+    // Put the modified data back on the canvas
+    ctx.putImageData(imageData, 0, 0);
+}
 
 // 1. Cat Palette Generation
 const catColors = [
@@ -96,7 +150,7 @@ function closeAllMenus() {
 // 4. Menu Actions Logic
 document.getElementById('btn-new').addEventListener('click', () => {
     if(confirm("Purr-ge the canvas?")) {
-        saveHistory(); // Allow undoing a clear!
+        saveHistory();
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         statusBar.innerText = "Canvas cleared!";
     }
@@ -132,7 +186,6 @@ document.getElementById('btn-random-cat').addEventListener('click', () => {
 canvas.oncontextmenu = (e) => e.preventDefault();
 
 canvas.addEventListener('mousedown', (e) => {
-    // SAVE HISTORY BEFORE STARTING
     saveHistory();
 
     drawing = true;
@@ -144,6 +197,14 @@ canvas.addEventListener('mousedown', (e) => {
     ctx.fillStyle = (e.button === 2) ? bgColor : fgColor;
     ctx.lineWidth = currentTool === 'brush' ? 8 : 2;
     ctx.lineCap = 'round';
+
+    // SPECIAL FILL TOOL CHECK
+    if (currentTool === 'fill') {
+        const fillColor = hexToRgba(ctx.fillStyle);
+        floodFill(startX, startY, fillColor);
+        drawing = false; // Fill is instantaneous
+        return;
+    }
 
     if (currentTool === 'pencil' || currentTool === 'brush' || currentTool === 'eraser') {
         ctx.beginPath();
