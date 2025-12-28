@@ -1,23 +1,93 @@
-<!-- Inside <div class="main-content"> -->
-<div class="sidebar-controls">
-    <div class="toolbar" id="toolbar">
-        <!-- ... your existing tools ... -->
-        <div class="tool active" data-tool="pencil" title="Pencil">✏️</div>
-        <div class="tool" data-tool="eraser" title="Paw Eraser">🐾</div>
-        <div class="tool" data-tool="brush" title="Tail Brush">🖌️</div>
-        <div class="tool" data-tool="fill" title="Milk Bucket">🥣</div>
-        <div class="tool" data-tool="line" title="Yarn Line">🧶</div>
-        <div class="tool" data-tool="rect" title="Cardboard Box">📦</div>
-        <div class="tool" data-tool="circle" title="Ball of Fluff">◯</div>
-        <div class="tool" data-tool="stamp" title="Cat Stamp">🐱</div>
-    </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meow Paint - v98.cat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-    <!-- NEW: Tool Options Box for Brush Sizes -->
-    <div class="tool-options" id="size-picker">
-        <div class="size-option active" data-size="2"><div class="dot" style="width:2px; height:2px;"></div></div>
-        <div class="size-option" data-size="5"><div class="dot" style="width:5px; height:5px;"></div></div>
-        <div class="size-option" data-size="10"><div class="dot" style="width:10px; height:10px;"></div></div>
-        <div class="size-option" data-size="15"><div class="dot" style="width:15px; height:15px;"></div></div>
-        <div class="size-option" data-size="25"><div class="dot" style="width:25px; height:25px;"></div></div>
+<div class="desktop">
+    <div class="window-container">
+        <div class="ear left"></div>
+        <div class="ear right"></div>
+        
+        <div class="window">
+            <div class="title-bar">
+                <div class="title-text">🐾 untitled - Meow Paint</div>
+            </div>
+
+            <div id="window-body">
+                <div class="menu-bar">
+                    <div class="menu-item">
+                        <span>File</span>
+                        <div class="dropdown">
+                            <div class="dropdown-item" id="btn-new">New (Clear)</div>
+                            <div class="dropdown-item" id="btn-save">Save Art</div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <span>Edit</span>
+                        <div class="dropdown">
+                            <div class="dropdown-item" id="btn-undo">Undo (Ctrl+Z)</div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <span>View</span>
+                        <div class="dropdown">
+                            <div class="dropdown-item" onclick="alert('Looking good! 🐾')">Zoom In</div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <span>Kittens</span>
+                        <div class="dropdown">
+                            <div class="dropdown-item" id="btn-meow">Say Meow!</div>
+                            <div class="dropdown-item" id="btn-random-cat">Random Cat Stamp</div>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <span>Help</span>
+                        <div class="dropdown">
+                            <div class="dropdown-item" onclick="alert('Meow Paint v98.cat\nBuilt with Love & Kittens')">About</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="main-content">
+                    <div class="toolbar" id="toolbar">
+                        <div class="tool active" data-tool="pencil" title="Pencil">✏️</div>
+                        <div class="tool" data-tool="eraser" title="Paw Eraser">🐾</div>
+                        <div class="tool" data-tool="brush" title="Tail Brush">🖌️</div>
+                        <div class="tool" data-tool="fill" title="Milk Bucket">🥣</div>
+                        <div class="tool" data-tool="line" title="Yarn Line">🧶</div>
+                        <div class="tool" data-tool="rect" title="Cardboard Box">📦</div>
+                        <div class="tool" data-tool="circle" title="Ball of Fluff">◯</div>
+                        <div class="tool" data-tool="stamp" title="Cat Stamp">🐱</div>
+                    </div>
+
+                    <div class="canvas-wrapper">
+                        <canvas id="paintCanvas" width="600" height="400"></canvas>
+                    </div>
+                </div>
+
+                <div class="footer">
+                    <div class="current-colors">
+                        <div id="bg-color-preview"></div>
+                        <div id="fg-color-preview"></div>
+                    </div>
+                    <div class="palette" id="palette"></div>
+                </div>
+
+                <div class="status-bar" id="status-bar">
+                    For Help, click Help Topics on the Help Menu.
+                </div>
+            </div> 
+        </div>
     </div>
 </div>
+
+<script src="script.js"></script>
+</body>
+</html>
