@@ -40,60 +40,62 @@ window.addEventListener('keydown', (e) => {
     }
 });
 
-// --- FLOOD FILL LOGIC ---
-function hexToRgba(hex) {
-    // Converts #ffffff to [255, 255, 255, 255]
-    let r = parseInt(hex.slice(1, 3), 16);
-    let g = parseInt(hex.slice(3, 5), 16);
-    let b = parseInt(hex.slice(5, 7), 16);
-    return [r, g, b, 255];
+// --- ROBUST FLOOD FILL LOGIC ---
+
+// Helper to convert any hex color to an array of [R, G, B, A]
+function getRgbaFromHex(hex) {
+    let c;
+    if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+        c= hex.substring(1).split('');
+        if(c.length== 3){
+            c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+        }
+        c= '0x' + c.join('');
+        return [(c>>16)&255, (c>>8)&255, c&255, 255];
+    }
+    return [0, 0, 0, 255]; // Fallback to black
 }
 
-function floodFill(startX, startY, fillColor) {
+function floodFill(x, y, fillRgba) {
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
     const width = canvas.width;
     const height = canvas.height;
 
-    // Get the color of the pixel we clicked on
-    const startPos = (startY * width + startX) * 4;
-    const startR = data[startPos];
-    const startG = data[startPos + 1];
-    const startB = data[startPos + 2];
-    const startA = data[startPos + 3];
+    const targetIdx = (y * width + x) * 4;
+    const targetR = data[targetIdx];
+    const targetG = data[targetIdx + 1];
+    const targetB = data[targetIdx + 2];
+    const targetA = data[targetIdx + 3];
 
-    // If we're clicking on the same color as the fill color, stop (avoid infinite loop)
-    if (startR === fillColor[0] && startG === fillColor[1] && startB === fillColor[2] && startA === fillColor[3]) {
+    // If the target pixel is already the color we want to fill, stop.
+    if (targetR === fillRgba[0] && targetG === fillRgba[1] && 
+        targetB === fillRgba[2] && targetA === fillRgba[3]) {
         return;
     }
 
-    // Stack-based fill algorithm
-    const pixelStack = [[startX, startY]];
+    const stack = [[x, y]];
 
-    while (pixelStack.length > 0) {
-        const [x, y] = pixelStack.pop();
-        const currentPos = (y * width + x) * 4;
+    while (stack.length > 0) {
+        const [currX, currY] = stack.pop();
+        const currIdx = (currY * width + currX) * 4;
 
-        // Check if current pixel matches start color
-        if (data[currentPos] === startR &&
-            data[currentPos + 1] === startG &&
-            data[currentPos + 2] === startB &&
-            data[currentPos + 3] === startA) {
+        if (data[currIdx] === targetR && data[currIdx + 1] === targetG &&
+            data[currIdx + 2] === targetB && data[currIdx + 3] === targetA) {
+            
+            // Color the current pixel
+            data[currIdx] = fillRgba[0];
+            data[currIdx + 1] = fillRgba[1];
+            data[currIdx + 2] = fillRgba[2];
+            data[currIdx + 3] = fillRgba[3];
 
-            // Color the pixel
-            data[currentPos] = fillColor[0];
-            data[currentPos + 1] = fillColor[1];
-            data[currentPos + 2] = fillColor[2];
-            data[currentPos + 3] = fillColor[3];
-
-            // Add neighbors to stack (checking boundaries)
-            if (x > 0) pixelStack.push([x - 1, y]);
-            if (x < width - 1) pixelStack.push([x + 1, y]);
-            if (y > 0) pixelStack.push([x, y - 1]);
-            if (y < height - 1) pixelStack.push([x, y + 1]);
+            // Push neighbors to stack
+            if (currX > 0) stack.push([currX - 1, currY]);
+            if (currX < width - 1) stack.push([currX + 1, currY]);
+            if (currY > 0) stack.push([currX, currY - 1]);
+            if (currY < height - 1) stack.push([currX, currY + 1]);
         }
     }
-    // Put the modified data back on the canvas
     ctx.putImageData(imageData, 0, 0);
 }
 
@@ -179,6 +181,7 @@ document.getElementById('btn-random-cat').addEventListener('click', () => {
     const x = Math.random() * (canvas.width - 60);
     const y = 40 + Math.random() * (canvas.height - 60);
     ctx.font = '50px serif';
+    ctx.fillStyle = fgColor;
     ctx.fillText(randomCat, x, y);
 });
 
@@ -193,18 +196,22 @@ canvas.addEventListener('mousedown', (e) => {
     startY = e.offsetY;
     snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
     
+    // Set colors for the context
     ctx.strokeStyle = (e.button === 2) ? bgColor : fgColor;
     ctx.fillStyle = (e.button === 2) ? bgColor : fgColor;
-    ctx.lineWidth = currentTool === 'brush' ? 8 : 2;
-    ctx.lineCap = 'round';
 
-    // SPECIAL FILL TOOL CHECK
+    // IF FILL TOOL
     if (currentTool === 'fill') {
-        const fillColor = hexToRgba(ctx.fillStyle);
-        floodFill(startX, startY, fillColor);
-        drawing = false; // Fill is instantaneous
+        // Use our robust helper to get the RGBA array from the current fgColor or bgColor
+        const colorToUse = (e.button === 2) ? bgColor : fgColor;
+        const rgbaArr = getRgbaFromHex(colorToUse);
+        floodFill(startX, startY, rgbaArr);
+        drawing = false; 
         return;
     }
+
+    ctx.lineWidth = currentTool === 'brush' ? 8 : 2;
+    ctx.lineCap = 'round';
 
     if (currentTool === 'pencil' || currentTool === 'brush' || currentTool === 'eraser') {
         ctx.beginPath();
