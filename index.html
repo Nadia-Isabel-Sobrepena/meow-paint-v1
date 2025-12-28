@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meow Paint - v98.cat</title>
+    <!-- Cute Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="desktop">
+    <div class="window-container">
+        <!-- The Cat Ears -->
+        <div class="ear left"></div>
+        <div class="ear right"></div>
+        
+        <div class="window">
+            <!-- Title Bar -->
+            <div class="title-bar">
+                <div class="title-text">🐾 untitled - Meow Paint</div>
+                <div class="title-controls">
+                    <button class="win-btn">_</button>
+                    <button class="win-btn">□</button>
+                    <button class="win-btn close">X</button>
+                </div>
+            </div>
+
+            <!-- Menu Bar -->
+            <div class="menu-bar">
+                <span>File</span><span>Edit</span><span>View</span><span>Kittens</span><span>Help</span>
+            </div>
+
+            <!-- Workspace -->
+            <div class="main-content">
+                <div class="toolbar" id="toolbar">
+                    <div class="tool active" data-tool="pencil" title="Pencil">✏️</div>
+                    <div class="tool" data-tool="eraser" title="Paw Eraser">🐾</div>
+                    <div class="tool" data-tool="brush" title="Tail Brush">🖌️</div>
+                    <div class="tool" data-tool="fill" title="Milk Bucket">🥣</div>
+                    <div class="tool" data-tool="line" title="Yarn Line">🧶</div>
+                    <div class="tool" data-tool="rect" title="Cardboard Box">📦</div>
+                    <div class="tool" data-tool="circle" title="Ball of Fluff">🧶</div>
+                    <div class="tool" data-tool="stamp" title="Cat Stamp">🐱</div>
+                </div>
+
+                <div class="canvas-wrapper">
+                    <canvas id="paintCanvas" width="600" height="400"></canvas>
+                </div>
+            </div>
+
+            <!-- Bottom Palette -->
+            <div class="footer">
+                <div class="current-colors">
+                    <div id="bg-color-preview"></div>
+                    <div id="fg-color-preview"></div>
+                </div>
+                <div class="palette" id="palette">
+                    <!-- JS will fill this with colors -->
+                </div>
+            </div>
+
+            <div class="status-bar">
+                Click here for treats... I mean, help!
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

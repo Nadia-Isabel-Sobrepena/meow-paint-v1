@@ -1,0 +1,179 @@
+:root {
+    --bg-pink: #ffe4e1;
+    --win-grey: #fce4ec;
+    --accent-pink: #ffb7c5;
+    --border-dark: #d8a7b1;
+    --border-darkest: #8a6d73;
+    --desktop-mint: #e0f2f1;
+}
+
+body {
+    background-color: var(--desktop-mint);
+    background-image: radial-gradient(#ffffff 2px, transparent 2px);
+    background-size: 30px 30px;
+    font-family: 'Varela Round', sans-serif;
+    margin: 0;
+    overflow: hidden;
+    /* Reverted to standard Windows pointer */
+    cursor: default;
+}
+
+.desktop {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.window-container {
+    position: relative;
+    padding-top: 20px;
+}
+
+/* Cat Ears */
+.ear {
+    position: absolute;
+    top: 0;
+    width: 60px;
+    height: 50px;
+    background: var(--win-grey);
+    border: 3px solid var(--border-darkest);
+    border-bottom: none;
+    z-index: -1;
+    border-radius: 50% 50% 0 0;
+}
+.ear.left { left: 30px; transform: rotate(-15deg); }
+.ear.right { right: 30px; transform: rotate(15deg); }
+.ear::after {
+    content: '';
+    position: absolute;
+    top: 10px; left: 15px;
+    width: 30px; height: 35px;
+    background: #ffc1cc;
+    border-radius: 50% 50% 0 0;
+}
+
+.window {
+    background-color: var(--win-grey);
+    border: 3px solid var(--border-darkest);
+    box-shadow: 8px 8px 0px rgba(0,0,0,0.05);
+    width: 750px;
+    display: flex;
+    flex-direction: column;
+    padding: 2px;
+}
+
+.title-bar {
+    background: var(--accent-pink);
+    padding: 5px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    color: #5d4037;
+    border-bottom: 2px solid var(--border-darkest);
+}
+
+.win-btn {
+    width: 20px;
+    height: 18px;
+    background: white;
+    border: 2px solid var(--border-darkest);
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.menu-bar {
+    font-size: 12px;
+    padding: 5px;
+    border-bottom: 1px solid var(--border-dark);
+}
+.menu-bar span { margin-right: 12px; }
+
+.main-content {
+    display: flex;
+    padding: 10px;
+    gap: 10px;
+}
+
+.toolbar {
+    display: grid;
+    grid-template-columns: repeat(2, 35px);
+    grid-auto-rows: 35px;
+    gap: 5px;
+}
+
+.tool {
+    background: white;
+    border: 2px solid var(--border-dark);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    transition: transform 0.1s;
+    cursor: pointer;
+}
+
+.tool.active {
+    background: var(--accent-pink);
+    border-color: var(--border-darkest);
+    transform: scale(0.9);
+}
+
+.canvas-wrapper {
+    flex-grow: 1;
+    background-color: white;
+    border: 3px inset var(--border-dark);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+canvas {
+    display: block;
+    image-rendering: pixelated;
+    background: white;
+    /* Regular crosshair cursor for drawing, like real MS Paint */
+    cursor: crosshair;
+}
+
+.footer {
+    display: flex;
+    padding: 10px;
+    gap: 15px;
+    align-items: center;
+}
+
+.current-colors {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--border-darkest);
+    position: relative;
+    background: white;
+    border-radius: 5px;
+}
+
+#bg-color-preview { width: 22px; height: 22px; background: white; border: 1px solid #000; position: absolute; bottom: 3px; right: 3px; }
+#fg-color-preview { width: 22px; height: 22px; background: black; border: 1px solid #000; position: absolute; top: 3px; left: 3px; z-index: 2; }
+
+.palette {
+    display: grid;
+    grid-template-columns: repeat(14, 22px);
+    gap: 3px;
+}
+
+.swatch {
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--border-dark);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.status-bar {
+    border-top: 2px solid var(--border-dark);
+    font-size: 11px;
+    padding: 5px 10px;
+    color: var(--border-darkest);
+}
