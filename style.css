@@ -29,7 +29,6 @@ body {
     padding-top: 20px;
 }
 
-/* Cat Ears */
 .ear {
     position: absolute;
     top: 0;
@@ -66,25 +65,13 @@ body {
     background: var(--accent-pink);
     padding: 5px 10px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     font-weight: bold;
     color: #5d4037;
     border-bottom: 2px solid var(--border-darkest);
 }
 
-.win-btn {
-    width: 20px;
-    height: 18px;
-    background: white;
-    border: 2px solid var(--border-darkest);
-    border-radius: 4px;
-    font-size: 10px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-/* Menu Bar */
 .menu-bar {
     font-size: 12px;
     padding: 2px 5px;
@@ -102,7 +89,6 @@ body {
     background-color: var(--accent-pink);
 }
 
-/* Dropdown styling */
 .dropdown {
     display: none;
     position: absolute;
@@ -130,7 +116,6 @@ body {
     color: white;
 }
 
-/* Main Workspace */
 .main-content {
     display: flex;
     padding: 10px;
@@ -177,7 +162,6 @@ canvas {
     cursor: crosshair;
 }
 
-/* Footer & Palette */
 .footer {
     display: flex;
     padding: 10px;

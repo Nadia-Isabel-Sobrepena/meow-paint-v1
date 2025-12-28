@@ -12,6 +12,37 @@ let fgColor = '#000000';
 let bgColor = '#ffffff';
 let startX, startY, snapshot;
 
+// --- UNDO SYSTEM ---
+let undoStack = [];
+const maxHistory = 20; // Keep the last 20 steps to save memory
+
+function saveHistory() {
+    // Save current canvas state to the stack
+    if (undoStack.length >= maxHistory) {
+        undoStack.shift(); // Remove oldest if limit reached
+    }
+    undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+}
+
+function undo() {
+    if (undoStack.length > 0) {
+        let previousState = undoStack.pop();
+        ctx.putImageData(previousState, 0, 0);
+        statusBar.innerText = "Undo successful! 🐾";
+    } else {
+        statusBar.innerText = "Nothing left to undo, meow!";
+    }
+}
+
+// Keyboard Shortcut: Ctrl + Z
+window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+        e.preventDefault(); // Stop browser from doing its own thing
+        undo();
+    }
+});
+// -------------------
+
 // 1. Cat Palette Generation
 const catColors = [
     '#000000','#8c7b75','#ff8a80','#ffd180','#a5d6a7','#80deea','#9fa8da','#ce93d8','#f48fb1','#ffffff',
@@ -63,45 +94,47 @@ function closeAllMenus() {
 }
 
 // 4. Menu Actions Logic
-// FILE -> NEW
 document.getElementById('btn-new').addEventListener('click', () => {
-    if(confirm("Purr-ge the canvas? All your hard work will be lost!")) {
+    if(confirm("Purr-ge the canvas?")) {
+        saveHistory(); // Allow undoing a clear!
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        statusBar.innerText = "Canvas cleared! Start fresh! 🐾";
+        statusBar.innerText = "Canvas cleared!";
     }
 });
 
-// FILE -> SAVE
 document.getElementById('btn-save').addEventListener('click', () => {
     const link = document.createElement('a');
     link.download = 'my-cat-art.png';
     link.href = canvas.toDataURL();
     link.click();
-    statusBar.innerText = "Masterpiece saved to your folder!";
+    statusBar.innerText = "Masterpiece saved!";
 });
 
-// KITTENS -> MEOW
+document.getElementById('btn-undo').addEventListener('click', () => {
+    undo();
+});
+
 document.getElementById('btn-meow').addEventListener('click', () => {
-    alert("MEOW! 🐾✨");
-    statusBar.innerText = "The cat said hi!";
+    alert("MEOW! 🐾");
 });
 
-// KITTENS -> RANDOM CAT STAMP
 document.getElementById('btn-random-cat').addEventListener('click', () => {
+    saveHistory();
     const cats = ['🐱', '🐈', '😸', '😹', '😻', '😼', '😽', '😾', '😿', '🙀'];
     const randomCat = cats[Math.floor(Math.random() * cats.length)];
     const x = Math.random() * (canvas.width - 60);
     const y = 40 + Math.random() * (canvas.height - 60);
-    
     ctx.font = '50px serif';
     ctx.fillText(randomCat, x, y);
-    statusBar.innerText = "Stray cat appeared on the canvas!";
 });
 
 // 5. Drawing Engine
 canvas.oncontextmenu = (e) => e.preventDefault();
 
 canvas.addEventListener('mousedown', (e) => {
+    // SAVE HISTORY BEFORE STARTING
+    saveHistory();
+
     drawing = true;
     startX = e.offsetX;
     startY = e.offsetY;

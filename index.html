@@ -11,84 +11,79 @@
 
 <div class="desktop">
     <div class="window-container">
-        <!-- The Cat Ears -->
         <div class="ear left"></div>
         <div class="ear right"></div>
         
         <div class="window">
-            <!-- Title Bar -->
             <div class="title-bar">
                 <div class="title-text">🐾 untitled - Meow Paint</div>
             </div>
 
-            <!-- Menu Bar with Dropdowns -->
-            <div class="menu-bar">
-                <div class="menu-item">
-                    <span>File</span>
-                    <div class="dropdown">
-                        <div class="dropdown-item" id="btn-new">New (Clear)</div>
-                        <div class="dropdown-item" id="btn-save">Save Art</div>
+            <div id="window-body">
+                <div class="menu-bar">
+                    <div class="menu-item">
+                        <span>File</span>
+                        <div class="dropdown">
+                            <div class="dropdown-item" id="btn-new">New (Clear)</div>
+                            <div class="dropdown-item" id="btn-save">Save Art</div>
+                        </div>
                     </div>
-                </div>
-                <div class="menu-item">
-                    <span>Edit</span>
-                    <div class="dropdown">
-                        <div class="dropdown-item" onclick="alert('Undo is coming soon! Meow!')">Undo</div>
+                    <div class="menu-item">
+                        <span>Edit</span>
+                        <div class="dropdown">
+                            <div class="dropdown-item" id="btn-undo">Undo (Ctrl+Z)</div>
+                        </div>
                     </div>
-                </div>
-                <div class="menu-item">
-                    <span>View</span>
-                    <div class="dropdown">
-                        <div class="dropdown-item" onclick="alert('Looking good! 🐾')">Zoom In</div>
+                    <div class="menu-item">
+                        <span>View</span>
+                        <div class="dropdown">
+                            <div class="dropdown-item" onclick="alert('Looking good! 🐾')">Zoom In</div>
+                        </div>
                     </div>
-                </div>
-                <div class="menu-item">
-                    <span>Kittens</span>
-                    <div class="dropdown">
-                        <div class="dropdown-item" id="btn-meow">Say Meow!</div>
-                        <div class="dropdown-item" id="btn-random-cat">Random Cat Stamp</div>
+                    <div class="menu-item">
+                        <span>Kittens</span>
+                        <div class="dropdown">
+                            <div class="dropdown-item" id="btn-meow">Say Meow!</div>
+                            <div class="dropdown-item" id="btn-random-cat">Random Cat Stamp</div>
+                        </div>
                     </div>
-                </div>
-                <div class="menu-item">
-                    <span>Help</span>
-                    <div class="dropdown">
-                        <div class="dropdown-item" onclick="alert('Meow Paint v98.cat\nReplicated with Vibe Coding & Kittens')">About Meow Paint</div>
+                    <div class="menu-item">
+                        <span>Help</span>
+                        <div class="dropdown">
+                            <div class="dropdown-item" onclick="alert('Meow Paint v98.cat\nBuilt with Love & Kittens')">About</div>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Workspace -->
-            <div class="main-content">
-                <div class="toolbar" id="toolbar">
-                    <div class="tool active" data-tool="pencil" title="Pencil">✏️</div>
-                    <div class="tool" data-tool="eraser" title="Paw Eraser">🐾</div>
-                    <div class="tool" data-tool="brush" title="Tail Brush">🖌️</div>
-                    <div class="tool" data-tool="fill" title="Milk Bucket">🥣</div>
-                    <div class="tool" data-tool="line" title="Yarn Line">🧶</div>
-                    <div class="tool" data-tool="rect" title="Cardboard Box">📦</div>
-                    <div class="tool" data-tool="circle" title="Ball of Fluff">◯</div>
-                    <div class="tool" data-tool="stamp" title="Cat Stamp">🐱</div>
                 </div>
 
-                <div class="canvas-wrapper">
-                    <canvas id="paintCanvas" width="600" height="400"></canvas>
-                </div>
-            </div>
+                <div class="main-content">
+                    <div class="toolbar" id="toolbar">
+                        <div class="tool active" data-tool="pencil" title="Pencil">✏️</div>
+                        <div class="tool" data-tool="eraser" title="Paw Eraser">🐾</div>
+                        <div class="tool" data-tool="brush" title="Tail Brush">🖌️</div>
+                        <div class="tool" data-tool="fill" title="Milk Bucket">🥣</div>
+                        <div class="tool" data-tool="line" title="Yarn Line">🧶</div>
+                        <div class="tool" data-tool="rect" title="Cardboard Box">📦</div>
+                        <div class="tool" data-tool="circle" title="Ball of Fluff">◯</div>
+                        <div class="tool" data-tool="stamp" title="Cat Stamp">🐱</div>
+                    </div>
 
-            <!-- Bottom Palette -->
-            <div class="footer">
-                <div class="current-colors">
-                    <div id="bg-color-preview"></div>
-                    <div id="fg-color-preview"></div>
+                    <div class="canvas-wrapper">
+                        <canvas id="paintCanvas" width="600" height="400"></canvas>
+                    </div>
                 </div>
-                <div class="palette" id="palette">
-                    <!-- JS will fill this with colors -->
-                </div>
-            </div>
 
-            <div class="status-bar" id="status-bar">
-                For Help, click Help Topics on the Help Menu.
-            </div>
+                <div class="footer">
+                    <div class="current-colors">
+                        <div id="bg-color-preview"></div>
+                        <div id="fg-color-preview"></div>
+                    </div>
+                    <div class="palette" id="palette"></div>
+                </div>
+
+                <div class="status-bar" id="status-bar">
+                    For Help, click Help Topics on the Help Menu.
+                </div>
+            </div> 
         </div>
     </div>
 </div>
