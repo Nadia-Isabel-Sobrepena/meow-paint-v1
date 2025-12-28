@@ -56,15 +56,24 @@
                 </div>
 
                 <div class="main-content">
-                    <div class="toolbar" id="toolbar">
-                        <div class="tool active" data-tool="pencil" title="Pencil">✏️</div>
-                        <div class="tool" data-tool="eraser" title="Paw Eraser">🐾</div>
-                        <div class="tool" data-tool="brush" title="Tail Brush">🖌️</div>
-                        <div class="tool" data-tool="fill" title="Milk Bucket">🥣</div>
-                        <div class="tool" data-tool="line" title="Yarn Line">🧶</div>
-                        <div class="tool" data-tool="rect" title="Cardboard Box">📦</div>
-                        <div class="tool" data-tool="circle" title="Ball of Fluff">◯</div>
-                        <div class="tool" data-tool="stamp" title="Cat Stamp">🐱</div>
+                    <!-- Updated Sidebar Container -->
+                    <div class="sidebar-controls">
+                        <div class="toolbar" id="toolbar">
+                            <div class="tool active" data-tool="pencil" title="Pencil">✏️</div>
+                            <div class="tool" data-tool="eraser" title="Paw Eraser">🐾</div>
+                            <div class="tool" data-tool="brush" title="Tail Brush">🖌️</div>
+                            <div class="tool" data-tool="fill" title="Milk Bucket">🥣</div>
+                            <div class="tool" data-tool="line" title="Yarn Line">🧶</div>
+                            <div class="tool" data-tool="rect" title="Cardboard Box">📦</div>
+                            <div class="tool" data-tool="circle" title="Ball of Fluff">◯</div>
+                            <div class="tool" data-tool="stamp" title="Cat Stamp">🐱</div>
+                        </div>
+
+                        <!-- NEW: Size Picker Box -->
+                        <div class="tool-options">
+                            <div class="options-label">Size: <span id="size-value">5</span>px</div>
+                            <input type="range" id="brush-slider" min="1" max="50" value="5">
+                        </div>
                     </div>
 
                     <div class="canvas-wrapper">
