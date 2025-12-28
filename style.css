@@ -1,9 +1,8 @@
 :root {
-    --win-bg: #fce4ec; /* Your pink theme */
+    --win-bg: #fce4ec; 
     --win-white: #ffffff;
-    --win-grey: #e0e0e0;
     --win-shadow: #d8a7b1;
-    --win-shadow-deep: #424242; /* Darker for better 3D effect */
+    --win-shadow-deep: #858383; 
     --accent-pink: #ffb7c5;
     --desktop-mint: #e0f2f1;
 }
@@ -19,24 +18,28 @@ body {
 }
 
 .desktop { display: flex; justify-content: center; align-items: center; height: 100vh; }
-.window-container { position: relative; padding-top: 25px; }
+.window-container { position: relative; padding-top: 30px; }
 
-/* Decorative Ears */
+/* Decorative Ears - Fixed positioning to match screenshot */
 .ear {
-    position: absolute; top: 0; width: 60px; height: 60px;
+    position: absolute; top: 0; width: 80px; height: 80px;
     background: var(--win-bg); border: 2px solid var(--win-shadow-deep);
     border-bottom: none; z-index: -1; border-radius: 50% 50% 0 0;
 }
-.ear.left { left: 30px; transform: rotate(-15deg); }
-.ear.right { right: 30px; transform: rotate(15deg); }
+.ear.left { left: 40px; transform: rotate(-10deg); }
+.ear.right { right: 40px; transform: rotate(10deg); }
+.ear::after {
+    content: ''; position: absolute; top: 15px; left: 15px;
+    width: 50px; height: 60px; background: #ffc1cc; border-radius: 50% 50% 0 0;
+}
 
-/* --- THE WINDOW --- */
+/* --- THE WINDOW FRAME --- */
 .window {
     background-color: var(--win-bg);
     border: 2px solid var(--win-white);
     outline: 1px solid var(--win-shadow-deep);
-    box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
-    width: 780px;
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+    width: 820px;
     display: flex;
     flex-direction: column;
     padding: 2px;
@@ -44,130 +47,132 @@ body {
 
 .title-bar {
     background: linear-gradient(90deg, #ffb7c5, #f48fb1);
-    padding: 3px 5px;
+    padding: 4px 6px;
     display: flex;
     font-weight: bold;
     color: white;
-    font-size: 13px;
+    font-size: 14px;
     margin-bottom: 2px;
 }
 
-.menu-bar { font-size: 11px; padding: 2px 0; display: flex; border-bottom: 1px solid var(--win-shadow); margin-bottom: 2px;}
-.menu-item { padding: 2px 8px; cursor: pointer; position: relative; }
+.menu-bar { font-size: 12px; padding: 2px 0; display: flex; border-bottom: 1px solid var(--win-shadow); margin-bottom: 2px; }
+.menu-item { padding: 2px 10px; cursor: pointer; position: relative; }
 
 /* Top Bar Controls */
 .top-bar-controls {
     background-color: var(--win-bg);
-    padding: 4px;
+    padding: 8px;
     border-bottom: 1px solid var(--win-shadow-deep);
 }
 
 .horizontal-tool-settings {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
     background: white;
-    padding: 2px 8px;
-    /* Inset Border */
+    padding: 4px 12px;
+    /* Sunken Inner Border */
     border: 1px solid var(--win-shadow-deep);
-    box-shadow: inset 1px 1px 0px #000, 1px 1px 0px var(--win-white);
+    box-shadow: inset 1px 1px 0px #b9b9b9, 1px 1px 0px var(--win-white);
 }
 
-/* --- THE EXACT WIN98 TOOLBAR --- */
-.main-content { display: flex; padding: 10px 5px; gap: 8px; }
+.options-label { font-size: 12px; font-weight: bold; color: #5d4037; }
+
+/* Retro Slider Styling */
+input[type="range"] { -webkit-appearance: none; width: 150px; background: transparent; cursor: pointer; }
+input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: var(--win-shadow-deep); }
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; height: 20px; width: 12px; background: var(--win-bg);
+    border-top: 2px solid var(--win-white); border-left: 2px solid var(--win-white);
+    border-right: 2px solid var(--win-shadow-deep); border-bottom: 2px solid var(--win-shadow-deep);
+    margin-top: -8px;
+}
+
+/* --- THE MAIN AREA --- */
+.main-content { display: flex; padding: 15px 10px; gap: 12px; }
+
+.sidebar-controls { display: flex; flex-direction: column; width: 60px; }
 
 .toolbar-frame {
     padding: 2px;
-    /* The thin frame around the whole toolbar */
-    border-top: 1px solid var(--win-shadow);
-    border-left: 1px solid var(--win-shadow);
+    border-top: 1px solid var(--win-shadow-deep);
+    border-left: 1px solid var(--win-shadow-deep);
     border-right: 1px solid var(--win-white);
     border-bottom: 1px solid var(--win-white);
 }
 
 .toolbar { 
     display: grid; 
-    grid-template-columns: repeat(2, 25px); /* Exactly like the screenshot */
-    grid-auto-rows: 25px; 
-    gap: 0px; /* Win98 tools are packed together */
+    grid-template-columns: repeat(2, 28px); 
+    grid-auto-rows: 28px; 
+    gap: 0px; 
 }
 
 .tool {
     background-color: var(--win-bg);
-    display: flex; justify-content: center; align-items: center; 
-    font-size: 14px; /* Icons are small in the original */
+    display: flex; justify-content: center; align-items: center; font-size: 16px;
     cursor: pointer;
-    box-sizing: border-box;
-
-    /* Raised Bevel effect using box-shadow for layering */
     border: 1px solid var(--win-bg);
-    box-shadow: 
-        inset 1px 1px 0px var(--win-white),
-        1px 1px 0px var(--win-shadow-deep);
+    box-shadow: inset 1px 1px 0px var(--win-white), 1px 1px 0px var(--win-shadow-deep);
 }
 
 .tool.active {
-    /* The Classic Checkerboard Dither Pattern */
     background-image: radial-gradient(var(--win-white) 25%, transparent 25%), 
                       radial-gradient(var(--win-white) 25%, transparent 25%);
     background-position: 0 0, 1px 1px;
     background-size: 2px 2px;
-    background-color: var(--win-bg);
-
-    /* Recessed Inset Border */
     border: 1px solid var(--win-shadow-deep);
     box-shadow: inset 1px 1px 0px #000;
-    
-    /* Icon slightly shifts when pressed */
-    padding-top: 1px;
-    padding-left: 1px;
+    padding-top: 1px; padding-left: 1px;
 }
 
-/* Canvas Area */
+/* Canvas Area - Deep Inset */
 .canvas-wrapper {
     flex-grow: 1;
     background-color: var(--win-shadow);
-    /* Extra deep sunken border */
     border: 1px solid var(--win-white);
     box-shadow: inset 2px 2px 0px #000, inset 3px 3px 0px var(--win-shadow-deep);
     padding: 3px;
+    overflow: hidden;
 }
 
 canvas { display: block; image-rendering: pixelated; background: white; cursor: crosshair; }
 
-/* Palette Area */
-.footer { display: flex; padding: 8px; gap: 10px; border-top: 1px solid var(--win-shadow); }
+/* Palette & Footer */
+.footer { display: flex; padding: 10px; gap: 12px; border-top: 1px solid var(--win-shadow); }
 
-.current-colors { 
-    width: 30px; height: 30px; background: var(--win-bg); position: relative;
+.current-colors-frame {
+    padding: 2px;
     border: 1px solid var(--win-shadow-deep);
     box-shadow: inset 1px 1px 0px #000, 1px 1px 0px var(--win-white);
 }
-#bg-color-preview { width: 14px; height: 14px; background: white; border: 1px solid #000; position: absolute; bottom: 2px; right: 2px; }
-#fg-color-preview { width: 14px; height: 14px; background: black; border: 1px solid #000; position: absolute; top: 2px; left: 2px; z-index: 2; }
 
-.palette { display: grid; grid-template-columns: repeat(14, 16px); gap: 1px; }
+.current-colors { width: 34px; height: 34px; background: var(--win-bg); position: relative; }
+#bg-color-preview { width: 18px; height: 18px; background: white; border: 1px solid #000; position: absolute; bottom: 2px; right: 2px; }
+#fg-color-preview { width: 18px; height: 18px; background: black; border: 1px solid #000; position: absolute; top: 2px; left: 2px; z-index: 2; }
+
+.palette { display: grid; grid-template-columns: repeat(14, 20px); gap: 2px; }
 .swatch { 
-    width: 16px; height: 16px; 
+    width: 20px; height: 20px; 
     border: 1px solid var(--win-shadow-deep);
     box-shadow: inset 1px 1px 0px var(--win-white);
 }
 
 /* Status Bar */
 .status-bar {
-    height: 20px; font-size: 11px; padding: 0 5px; line-height: 20px; color: #5d4037;
-    border: 1px solid var(--win-shadow-deep);
-    box-shadow: inset 1px 1px 0px #000, 1px 1px 0px var(--win-white);
+    height: 24px; font-size: 12px; padding: 0 8px; line-height: 24px; color: #5d4037;
+    border-top: 1px solid var(--win-shadow-deep);
+    box-shadow: inset 1px 1px 0px #000, 0px 1px 0px var(--win-white);
+    background: var(--win-bg);
 }
 
 /* Dropdowns */
 .dropdown {
     display: none; position: absolute; top: 100%; left: 0; z-index: 100;
-    background: var(--win-bg);
-    border: 1px solid var(--win-shadow-deep);
-    box-shadow: 1px 1px 0px var(--win-white) inset, 2px 2px 0px rgba(0,0,0,0.3);
+    background: var(--win-bg); border: 1px solid var(--win-shadow-deep);
+    box-shadow: inset 1px 1px 0px var(--win-white), 2px 2px 0px rgba(0,0,0,0.2);
     min-width: 140px;
 }
 .menu-item.active .dropdown { display: block; }
-.dropdown-item { padding: 4px 10px; color: #5d4037; }
-.dropdown-item:hover { background-color: var(--accent-pink); color: white; }
+.dropdown-item { padding: 5px 12px; }
+.dropdown-item:hover { background: var(--accent-pink); color: white; }
