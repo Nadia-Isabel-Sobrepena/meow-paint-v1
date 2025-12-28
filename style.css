@@ -14,7 +14,6 @@ body {
     font-family: 'Varela Round', sans-serif;
     margin: 0;
     overflow: hidden;
-    /* Reverted to standard Windows pointer */
     cursor: default;
 }
 
@@ -82,15 +81,56 @@ body {
     border-radius: 4px;
     font-size: 10px;
     font-weight: bold;
+    cursor: pointer;
 }
 
+/* Menu Bar */
 .menu-bar {
     font-size: 12px;
-    padding: 5px;
+    padding: 2px 5px;
+    display: flex;
     border-bottom: 1px solid var(--border-dark);
 }
-.menu-bar span { margin-right: 12px; }
 
+.menu-item {
+    padding: 2px 8px;
+    cursor: pointer;
+    position: relative;
+}
+
+.menu-item:hover {
+    background-color: var(--accent-pink);
+}
+
+/* Dropdown styling */
+.dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--win-grey);
+    border: 2px solid var(--border-darkest);
+    min-width: 140px;
+    z-index: 100;
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+}
+
+.menu-item.active .dropdown {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 5px 10px;
+    color: #5d4037;
+    white-space: nowrap;
+}
+
+.dropdown-item:hover {
+    background-color: var(--accent-pink);
+    color: white;
+}
+
+/* Main Workspace */
 .main-content {
     display: flex;
     padding: 10px;
@@ -134,10 +174,10 @@ canvas {
     display: block;
     image-rendering: pixelated;
     background: white;
-    /* Regular crosshair cursor for drawing, like real MS Paint */
     cursor: crosshair;
 }
 
+/* Footer & Palette */
 .footer {
     display: flex;
     padding: 10px;

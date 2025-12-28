@@ -4,6 +4,7 @@ const toolbar = document.getElementById('toolbar');
 const palette = document.getElementById('palette');
 const fgPreview = document.getElementById('fg-color-preview');
 const bgPreview = document.getElementById('bg-color-preview');
+const statusBar = document.getElementById('status-bar');
 
 let drawing = false;
 let currentTool = 'pencil';
@@ -41,10 +42,63 @@ toolbar.addEventListener('click', (e) => {
         document.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
         btn.classList.add('active');
         currentTool = btn.dataset.tool;
+        statusBar.innerText = `Selected Tool: ${currentTool.charAt(0).toUpperCase() + currentTool.slice(1)}`;
     }
 });
 
-// 3. Drawing Events
+// 3. Menu Dropdown Toggling
+document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+        const isActive = item.classList.contains('active');
+        closeAllMenus();
+        if (!isActive) item.classList.add('active');
+        e.stopPropagation();
+    });
+});
+
+window.addEventListener('click', () => closeAllMenus());
+
+function closeAllMenus() {
+    document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+}
+
+// 4. Menu Actions Logic
+// FILE -> NEW
+document.getElementById('btn-new').addEventListener('click', () => {
+    if(confirm("Purr-ge the canvas? All your hard work will be lost!")) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        statusBar.innerText = "Canvas cleared! Start fresh! 🐾";
+    }
+});
+
+// FILE -> SAVE
+document.getElementById('btn-save').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'my-cat-art.png';
+    link.href = canvas.toDataURL();
+    link.click();
+    statusBar.innerText = "Masterpiece saved to your folder!";
+});
+
+// KITTENS -> MEOW
+document.getElementById('btn-meow').addEventListener('click', () => {
+    alert("MEOW! 🐾✨");
+    statusBar.innerText = "The cat said hi!";
+});
+
+// KITTENS -> RANDOM CAT STAMP
+document.getElementById('btn-random-cat').addEventListener('click', () => {
+    const cats = ['🐱', '🐈', '😸', '😹', '😻', '😼', '😽', '😾', '😿', '🙀'];
+    const randomCat = cats[Math.floor(Math.random() * cats.length)];
+    const x = Math.random() * (canvas.width - 60);
+    const y = 40 + Math.random() * (canvas.height - 60);
+    
+    ctx.font = '50px serif';
+    ctx.fillText(randomCat, x, y);
+    statusBar.innerText = "Stray cat appeared on the canvas!";
+});
+
+// 5. Drawing Engine
 canvas.oncontextmenu = (e) => e.preventDefault();
 
 canvas.addEventListener('mousedown', (e) => {
@@ -66,7 +120,7 @@ canvas.addEventListener('mousedown', (e) => {
     if (currentTool === 'stamp') {
         ctx.font = '40px serif';
         ctx.fillText('🐱', startX - 20, startY + 15);
-        drawing = false; // Just one stamp
+        drawing = false; 
     }
 });
 
@@ -82,7 +136,6 @@ canvas.addEventListener('mousemove', (e) => {
         ctx.lineTo(e.offsetX, e.offsetY);
         ctx.stroke();
     } else {
-        // Shape Previews
         ctx.putImageData(snapshot, 0, 0);
         if (currentTool === 'line') {
             ctx.beginPath();

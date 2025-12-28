@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meow Paint - v98.cat</title>
-    <!-- Cute Font -->
     <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -23,13 +22,44 @@
                 <div class="title-controls">
                     <button class="win-btn">_</button>
                     <button class="win-btn">□</button>
-                    <button class="win-btn close">X</button>
+                    <button class="win-btn close" onclick="location.reload()">X</button>
                 </div>
             </div>
 
-            <!-- Menu Bar -->
+            <!-- Menu Bar with Dropdowns -->
             <div class="menu-bar">
-                <span>File</span><span>Edit</span><span>View</span><span>Kittens</span><span>Help</span>
+                <div class="menu-item">
+                    <span>File</span>
+                    <div class="dropdown">
+                        <div class="dropdown-item" id="btn-new">New (Clear)</div>
+                        <div class="dropdown-item" id="btn-save">Save Art</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <span>Edit</span>
+                    <div class="dropdown">
+                        <div class="dropdown-item" onclick="alert('Undo is coming soon! Meow!')">Undo</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <span>View</span>
+                    <div class="dropdown">
+                        <div class="dropdown-item" onclick="alert('Looking good! 🐾')">Zoom In</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <span>Kittens</span>
+                    <div class="dropdown">
+                        <div class="dropdown-item" id="btn-meow">Say Meow!</div>
+                        <div class="dropdown-item" id="btn-random-cat">Random Cat Stamp</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <span>Help</span>
+                    <div class="dropdown">
+                        <div class="dropdown-item" onclick="alert('Meow Paint v98.cat\nReplicated with Vibe Coding & Kittens')">About Meow Paint</div>
+                    </div>
+                </div>
             </div>
 
             <!-- Workspace -->
@@ -41,7 +71,7 @@
                     <div class="tool" data-tool="fill" title="Milk Bucket">🥣</div>
                     <div class="tool" data-tool="line" title="Yarn Line">🧶</div>
                     <div class="tool" data-tool="rect" title="Cardboard Box">📦</div>
-                    <div class="tool" data-tool="circle" title="Ball of Fluff">🧶</div>
+                    <div class="tool" data-tool="circle" title="Ball of Fluff">◯</div>
                     <div class="tool" data-tool="stamp" title="Cat Stamp">🐱</div>
                 </div>
 
@@ -61,8 +91,8 @@
                 </div>
             </div>
 
-            <div class="status-bar">
-                Click here for treats... I mean, help!
+            <div class="status-bar" id="status-bar">
+                For Help, click Help Topics on the Help Menu.
             </div>
         </div>
     </div>
