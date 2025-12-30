@@ -7,65 +7,79 @@ const bgPreview = document.getElementById('bg-color-preview');
 const statusBar = document.getElementById('status-bar');
 const brushSlider = document.getElementById('brush-slider');
 const sizeValueDisplay = document.getElementById('size-value');
+const opacitySlider = document.getElementById('opacity-slider');
+const opacityValueDisplay = document.getElementById('opacity-value');
+
+// --- BUFFER CANVAS LOGIC ---
+// This hidden canvas draws strokes at 100% opacity, 
+// then renders them onto the main canvas at your chosen opacity.
+const bufferCanvas = document.createElement('canvas');
+const bctx = bufferCanvas.getContext('2d');
+bufferCanvas.width = canvas.width;
+bufferCanvas.height = canvas.height;
 
 let drawing = false;
 let currentTool = 'pencil';
 let fgColor = '#000000';
 let bgColor = '#ffffff';
-let currentSize = 5; 
+let currentSize = 22; 
+let currentOpacity = 1.0; 
 let startX, startY, snapshot;
 
-// Slider logic
+sizeValueDisplay.innerText = currentSize + "px";
+opacityValueDisplay.innerText = "100%";
+
 brushSlider.addEventListener('input', (e) => {
     currentSize = e.target.value;
-    sizeValueDisplay.innerText = currentSize;
+    sizeValueDisplay.innerText = currentSize + "px";
+});
+
+opacitySlider.addEventListener('input', (e) => {
+    currentOpacity = e.target.value / 100;
+    opacityValueDisplay.innerText = e.target.value + "%";
 });
 
 // Undo Logic
 let undoStack = [];
 const maxHistory = 20;
-
 function saveHistory() {
     if (undoStack.length >= maxHistory) undoStack.shift();
     undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
 }
-
 function undo() {
     if (undoStack.length > 0) {
         ctx.putImageData(undoStack.pop(), 0, 0);
         statusBar.innerText = "Undo successful! 🐾";
     }
 }
-
 window.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); undo(); }
 });
 
-// Flood Fill Robust
+// Flood Fill
 function getRgbaFromHex(hex) {
     let c = hex.substring(1).split('');
-    if (c.length == 3) c = [c[0], c[0], c[1], c[1], c[2], c[2]];
-    c = '0x' + c.join('');
+    if(c.length==3) c=[c[0],c[0],c[1],c[1],c[2],c[2]];
+    c='0x'+c.join('');
     return [(c>>16)&255, (c>>8)&255, c&255, 255];
 }
-
 function floodFill(x, y, fillRgba) {
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
     const data = imageData.data;
     const width = canvas.width;
-    const targetIdx = (y * width + x) * 4;
+    const targetIdx = (y*width+x)*4;
     const [tr, tg, tb, ta] = [data[targetIdx], data[targetIdx+1], data[targetIdx+2], data[targetIdx+3]];
-    if (tr === fillRgba[0] && tg === fillRgba[1] && tb === fillRgba[2] && ta === fillRgba[3]) return;
+    if(tr===fillRgba[0] && tg===fillRgba[1] && tb===fillRgba[2] && ta===fillRgba[3]) return;
     const stack = [[x, y]];
-    while (stack.length > 0) {
+    while(stack.length > 0) {
         const [cx, cy] = stack.pop();
-        const ci = (cy * width + cx) * 4;
-        if (data[ci]===tr && data[ci+1]===tg && data[ci+2]===tb && data[ci+3]===ta) {
+        const ci = (cy*width+cx)*4;
+        if(data[ci]===tr && data[ci+1]===tg && data[ci+2]===tb && data[ci+3]===ta) {
             data[ci]=fillRgba[0]; data[ci+1]=fillRgba[1]; data[ci+2]=fillRgba[2]; data[ci+3]=fillRgba[3];
-            if (cx > 0) stack.push([cx - 1, cy]);
-            if (cx < width - 1) stack.push([cx + 1, cy]);
-            if (cy > 0) stack.push([cx, cy - 1]);
-            if (cy < canvas.height - 1) stack.push([cx, cy + 1]);
+            if(cx>0) stack.push([cx-1, cy]);
+            if(cx<width-1) stack.push([cx+1, cy]);
+            if(cy>0) stack.push([cx, cy-1]);
+            if(cy<canvas.height-1) stack.push([cx, cy+1]);
         }
     }
     ctx.putImageData(imageData, 0, 0);
@@ -83,51 +97,82 @@ catColors.forEach(color => {
     palette.appendChild(swatch);
 });
 
-// Tool Switching
 toolbar.onclick = (e) => {
     const btn = e.target.closest('.tool');
     if (btn) {
         document.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
         btn.classList.add('active'); currentTool = btn.dataset.tool;
-        statusBar.innerText = `Selected Tool: ${currentTool}`;
     }
 };
 
-// Canvas Logic
+// --- DRAWING ENGINE ---
 canvas.oncontextmenu = (e) => e.preventDefault();
 canvas.onmousedown = (e) => {
-    saveHistory(); drawing = true; startX = e.offsetX; startY = e.offsetY;
-    snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    ctx.strokeStyle = (e.button === 2) ? bgColor : fgColor;
-    ctx.fillStyle = (e.button === 2) ? bgColor : fgColor;
+    saveHistory();
+    drawing = true;
+    startX = e.offsetX;
+    startY = e.offsetY;
     
+    // Snapshot the canvas before the stroke starts
+    snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    
+    // Clear and Setup Buffer
+    bctx.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
+    bctx.strokeStyle = (e.button === 2) ? bgColor : fgColor;
+    bctx.fillStyle = (e.button === 2) ? bgColor : fgColor;
+    
+    if (currentTool === 'pencil') {
+        bctx.lineCap = 'square'; bctx.lineWidth = Math.max(1, currentSize / 5);
+    } else {
+        bctx.lineCap = 'round'; bctx.lineJoin = 'round'; bctx.lineWidth = currentSize;
+    }
+    if (currentTool === 'eraser') { bctx.strokeStyle = '#ffffff'; }
+
     if (currentTool === 'fill') {
-        floodFill(startX, startY, getRgbaFromHex(ctx.fillStyle));
+        floodFill(startX, startY, getRgbaFromHex(bctx.fillStyle));
         drawing = false; return;
     }
-    ctx.lineWidth = currentSize; ctx.lineCap = 'round';
-    if (currentTool === 'pencil' || currentTool === 'brush' || currentTool === 'eraser') ctx.beginPath();
+    if (['pencil', 'brush', 'eraser'].includes(currentTool)) {
+        bctx.beginPath(); bctx.moveTo(startX, startY);
+    }
     if (currentTool === 'stamp') {
+        ctx.globalAlpha = currentOpacity;
         ctx.font = `${currentSize * 4}px serif`;
         ctx.fillText('🐱', startX - (currentSize * 2), startY + (currentSize * 1.5));
+        ctx.globalAlpha = 1.0;
         drawing = false;
     }
 };
 
 canvas.onmousemove = (e) => {
     if (!drawing) return;
-    if (currentTool === 'pencil' || currentTool === 'brush') { ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); }
-    else if (currentTool === 'eraser') { ctx.strokeStyle = '#ffffff'; ctx.lineWidth = currentSize * 2; ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); }
-    else {
-        ctx.putImageData(snapshot, 0, 0);
-        if (currentTool === 'line') { ctx.beginPath(); ctx.moveTo(startX, startY); ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); }
-        else if (currentTool === 'rect') { ctx.strokeRect(startX, startY, e.offsetX - startX, e.offsetY - startY); }
-        else if (currentTool === 'circle') { ctx.beginPath(); let r = Math.abs(e.offsetX - startX); ctx.arc(startX, startY, r, 0, Math.PI * 2); ctx.stroke(); }
+
+    // Redraw snapshot to clean up previous preview frame
+    ctx.putImageData(snapshot, 0, 0);
+
+    if (['pencil', 'brush', 'eraser'].includes(currentTool)) {
+        bctx.lineTo(e.offsetX, e.offsetY);
+        bctx.stroke();
+    } else if (currentTool === 'line') {
+        bctx.clearRect(0,0,bufferCanvas.width,bufferCanvas.height);
+        bctx.beginPath(); bctx.moveTo(startX, startY); bctx.lineTo(e.offsetX, e.offsetY); bctx.stroke();
+    } else if (currentTool === 'rect') {
+        bctx.clearRect(0,0,bufferCanvas.width,bufferCanvas.height);
+        bctx.strokeRect(startX, startY, e.offsetX - startX, e.offsetY - startY);
+    } else if (currentTool === 'circle') {
+        bctx.clearRect(0,0,bufferCanvas.width,bufferCanvas.height);
+        bctx.beginPath(); let r = Math.abs(e.offsetX - startX); bctx.arc(startX, startY, r, 0, Math.PI * 2); bctx.stroke();
     }
+
+    // Draw the entire buffer stroke onto main canvas with chosen opacity
+    ctx.globalAlpha = currentOpacity;
+    ctx.drawImage(bufferCanvas, 0, 0);
+    ctx.globalAlpha = 1.0;
 };
+
 window.onmouseup = () => drawing = false;
 
-// UI Menus
+// Dropdowns
 document.querySelectorAll('.menu-item').forEach(item => {
     item.onclick = (e) => {
         const act = item.classList.contains('active');
@@ -137,12 +182,14 @@ document.querySelectorAll('.menu-item').forEach(item => {
 });
 window.onclick = () => document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
 
-document.getElementById('btn-new').onclick = () => { if(confirm("Clear canvas?")) { saveHistory(); ctx.clearRect(0,0,canvas.width,canvas.height); } };
+document.getElementById('btn-new').onclick = () => { if(confirm("Clear?")) { saveHistory(); ctx.clearRect(0,0,canvas.width,canvas.height); } };
 document.getElementById('btn-save').onclick = () => { const l = document.createElement('a'); l.download='art.png'; l.href=canvas.toDataURL(); l.click(); };
 document.getElementById('btn-undo').onclick = () => undo();
-document.getElementById('btn-meow').onclick = () => { alert("MEOW! 🐾"); statusBar.innerText = "The cat said hi!"; };
+document.getElementById('btn-meow').onclick = () => alert("MEOW!");
 document.getElementById('btn-random-cat').onclick = () => {
     saveHistory(); const cats = ['🐱', '🐈', '😸', '😹', '😻', '😼', '😽', '😾', '😿', '🙀'];
     const x = Math.random() * (canvas.width - 60); const y = 40 + Math.random() * (canvas.height - 60);
+    ctx.globalAlpha = currentOpacity;
     ctx.font = '50px serif'; ctx.fillText(cats[Math.floor(Math.random()*cats.length)], x, y);
+    ctx.globalAlpha = 1.0;
 };
