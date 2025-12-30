@@ -21,21 +21,26 @@ body {
     overflow: hidden;
 }
 
-/* --- SPLASH SCREEN STYLES --- */
+/* --- CENTERED SPLASH SCREEN --- */
 #splash-screen {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background-color: #000000; /* Real 98 splash screens had black backgrounds */
+    background-color: #000000; 
     z-index: 10000;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    justify-content: center; /* Center vertically */
+    align-items: center;     /* Center horizontally */
     color: white;
     transition: opacity 0.8s ease-out;
 }
 
-.splash-content { text-align: center; }
+.splash-content { 
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content within the wrapper */
+    text-align: center; 
+}
 
 .splash-logo {
     font-size: 48px;
@@ -47,8 +52,20 @@ body {
 
 .splash-sub { font-size: 14px; letter-spacing: 2px; margin-bottom: 40px; color: var(--win-shadow); }
 
-.loading-box { width: 300px; text-align: left; }
-#loading-text { font-size: 11px; margin-bottom: 5px; font-family: monospace; }
+.loading-box { 
+    width: 300px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center children within box */
+}
+
+#loading-text { 
+    font-size: 11px; 
+    margin-bottom: 8px; 
+    font-family: monospace; 
+    text-align: center; /* Center the text itself */
+    width: 100%;
+}
 
 .progress-container {
     width: 100%; height: 16px;
@@ -59,18 +76,17 @@ body {
 
 #progress-bar {
     height: 100%; width: 0%;
-    /* Classic 98 Progress Bar Gradient (Blue in original, Pink for you) */
     background: linear-gradient(90deg, var(--accent-pink) 0%, var(--win-shadow-deep) 100%);
-    background-size: 15px 100%; /* Creates the "block" look */
+    background-size: 15px 100%;
 }
 
 .splash-footer {
     position: absolute; bottom: 30px;
     font-size: 10px; color: #666; line-height: 1.5;
+    text-align: center;
 }
 
-/* ... REST OF YOUR EXISTING CSS ... */
-
+/* --- THE WINDOW --- */
 .window-container { position: relative; padding-top: 35px; }
 
 .ear {
