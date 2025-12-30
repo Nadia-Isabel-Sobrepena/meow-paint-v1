@@ -2,7 +2,7 @@
     --win-bg: #fce4ec; 
     --win-white: #ffffff;
     --win-shadow: #d8a7b1;
-    --win-shadow-deep: #5d4037; /* Deep Cocoa Brown */
+    --win-shadow-deep: #5d4037; 
     --accent-pink: #ffb7c5;
     --desktop-mint: #e0f2f1;
     --tool-size: 36px;
@@ -23,7 +23,6 @@ body {
 
 .window-container { position: relative; padding-top: 30px; }
 
-/* Decorative Ears */
 .ear {
     position: absolute; top: 0; width: 85px; height: 85px;
     background: var(--win-bg); border: 2px solid var(--win-shadow-deep);
@@ -36,7 +35,6 @@ body {
     width: 55px; height: 70px; background: #ffc1cc; border-radius: 50% 50% 0 0;
 }
 
-/* --- THE WINDOW FRAME --- */
 .window {
     background-color: var(--win-bg);
     border: 2px solid var(--win-white);
@@ -61,7 +59,6 @@ body {
 .menu-bar { font-size: 12px; padding: 2px 0; display: flex; border-bottom: 1px solid var(--win-shadow); margin-bottom: 2px; }
 .menu-item { padding: 2px 12px; cursor: pointer; position: relative; color: var(--win-shadow-deep); }
 
-/* Top Bar Controls */
 .top-bar-controls {
     background-color: var(--win-bg);
     padding: 8px;
@@ -76,7 +73,6 @@ body {
     padding: 4px 10px;
 }
 
-/* Sunken readout for the size number */
 .size-readout {
     background: white;
     padding: 2px 6px;
@@ -87,63 +83,46 @@ body {
     border-left: 1px solid var(--win-shadow-deep);
     border-right: 1px solid var(--win-white);
     border-bottom: 1px solid var(--win-white);
-    min-width: 45px;
+    min-width: 50px;
     text-align: center;
 }
 
 .options-label { font-size: 12px; font-weight: bold; color: var(--win-shadow-deep); }
 
-/* --- AESTHETIC RETRO SLIDER --- */
+/* Vertical divider for the top bar */
+.divider {
+    width: 2px;
+    height: 20px;
+    background-color: var(--win-shadow);
+    border-right: 1px solid var(--win-white);
+    margin: 0 5px;
+}
+
 input[type="range"] { 
     -webkit-appearance: none; 
-    width: 150px; 
+    width: 120px; 
     background: transparent; 
     cursor: pointer; 
 }
-
-/* The Track (Sunken Line) */
 input[type="range"]::-webkit-slider-runnable-track { 
-    width: 100%; 
-    height: 2px; 
-    background: var(--win-shadow-deep); 
-    border-bottom: 1px solid var(--win-white);
+    width: 100%; height: 2px; background: var(--win-shadow-deep); border-bottom: 1px solid var(--win-white);
 }
-
-/* The Thumb (3D Raised Square) */
 input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none; 
-    height: 18px; 
-    width: 10px; 
-    background: var(--win-bg);
-    border-top: 2px solid var(--win-white);
-    border-left: 2px solid var(--win-white);
-    border-right: 2px solid var(--win-shadow-deep);
-    border-bottom: 2px solid var(--win-shadow-deep);
+    -webkit-appearance: none; height: 18px; width: 10px; background: var(--win-bg);
+    border-top: 2px solid var(--win-white); border-left: 2px solid var(--win-white);
+    border-right: 2px solid var(--win-shadow-deep); border-bottom: 2px solid var(--win-shadow-deep);
     margin-top: -9px;
 }
 
-/* --- MAIN CONTENT AREA --- */
 .main-content { display: flex; padding: 15px; gap: 15px; }
 .sidebar-controls { display: flex; flex-direction: column; width: 80px; }
-
-.toolbar-frame {
-    padding: 3px;
-    border: 1px solid var(--win-shadow-deep);
-    box-shadow: inset 1px 1px 0px var(--win-white);
-}
-
-.toolbar { 
-    display: grid; 
-    grid-template-columns: repeat(2, var(--tool-size)); 
-    grid-auto-rows: var(--tool-size); 
-    gap: 0px; 
-}
+.toolbar-frame { padding: 3px; border: 1px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white); }
+.toolbar { display: grid; grid-template-columns: repeat(2, var(--tool-size)); grid-auto-rows: var(--tool-size); gap: 0px; }
 
 .tool {
     background-color: var(--win-bg);
     display: flex; justify-content: center; align-items: center; 
-    font-size: 22px; 
-    cursor: pointer;
+    font-size: 22px; cursor: pointer;
     border: 1px solid var(--win-bg);
     box-shadow: inset 2px 2px 0px var(--win-white), 1px 1px 0px var(--win-shadow-deep);
 }
@@ -151,50 +130,31 @@ input[type="range"]::-webkit-slider-thumb {
 .tool.active {
     background-image: radial-gradient(rgba(255,255,255,0.7) 25%, transparent 25%), 
                       radial-gradient(rgba(255,255,255,0.7) 25%, transparent 25%);
-    background-position: 0 0, 1px 1px;
-    background-size: 2px 2px;
+    background-position: 0 0, 1px 1px; background-size: 2px 2px;
     border: 1px solid var(--win-shadow-deep);
     box-shadow: inset 1px 1px 0px var(--win-shadow-deep);
     padding-top: 2px; padding-left: 2px;
 }
 
 .canvas-wrapper {
-    flex-grow: 0;
-    background-color: var(--win-shadow);
-    border: 1px solid var(--win-white);
+    flex-grow: 0; background-color: var(--win-shadow); border: 1px solid var(--win-white);
     box-shadow: inset 2px 2px 0px var(--win-shadow-deep), inset 3px 3px 0px rgba(0,0,0,0.1);
-    padding: 5px;
-    overflow: hidden;
+    padding: 5px; overflow: hidden;
 }
 
 canvas { display: block; image-rendering: pixelated; background: white; cursor: crosshair; }
 
-/* Palette & Footer */
 .footer { display: flex; padding: 12px; gap: 15px; border-top: 1px solid var(--win-shadow); }
-
-.current-colors-frame {
-    padding: 3px;
-    border: 1px solid var(--win-shadow-deep);
-    box-shadow: inset 1px 1px 0px var(--win-shadow-deep), 1px 1px 0px var(--win-white);
-}
-
+.current-colors-frame { padding: 3px; border: 1px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-shadow-deep), 1px 1px 0px var(--win-white); }
 .current-colors { width: 38px; height: 38px; background: var(--win-bg); position: relative; }
 #bg-color-preview { width: 20px; height: 20px; background: white; border: 1px solid var(--win-shadow-deep); position: absolute; bottom: 2px; right: 2px; }
 #fg-color-preview { width: 20px; height: 20px; background: black; border: 1px solid var(--win-shadow-deep); position: absolute; top: 2px; left: 2px; z-index: 2; }
-
 .palette { display: grid; grid-template-columns: repeat(14, 22px); gap: 2px; }
-.swatch { 
-    width: 22px; height: 22px; 
-    border: 1px solid var(--win-shadow-deep);
-    box-shadow: inset 1px 1px 0px var(--win-white);
-}
+.swatch { width: 22px; height: 22px; border: 1px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white); }
 
 .status-bar {
-    height: 28px; font-size: 12px; padding: 0 10px; line-height: 28px; 
-    color: var(--win-shadow-deep);
-    border-top: 1px solid var(--win-shadow-deep);
-    box-shadow: inset 0px 1px 0px var(--win-white);
-    background: var(--win-bg);
+    height: 28px; font-size: 12px; padding: 0 10px; line-height: 28px; color: var(--win-shadow-deep);
+    border-top: 1px solid var(--win-shadow-deep); box-shadow: inset 0px 1px 0px var(--win-white); background: var(--win-bg);
 }
 
 .dropdown {
