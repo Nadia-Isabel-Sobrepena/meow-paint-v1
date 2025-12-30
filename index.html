@@ -10,27 +10,23 @@
 
 <div class="desktop">
     <div class="window-container">
-        <!-- Decorative Cat Ears -->
         <div class="ear left"></div>
         <div class="ear right"></div>
         
         <div class="window">
-            <!-- Title Bar -->
             <div class="title-bar">
                 <div class="title-text">🐾 untitled - Meow Paint</div>
             </div>
 
             <div id="window-body">
-                <!-- 1. Menu Bar -->
                 <div class="menu-bar">
                     <div class="menu-item"><span>File</span><div class="dropdown"><div class="dropdown-item" id="btn-new">New</div><div class="dropdown-item" id="btn-save">Save</div></div></div>
                     <div class="menu-item"><span>Edit</span><div class="dropdown"><div class="dropdown-item" id="btn-undo">Undo</div></div></div>
                     <div class="menu-item"><span>View</span><div class="dropdown"><div class="dropdown-item">Zoom In</div></div></div>
-                    <div class="menu-item"><span>Kittens</span><div class="dropdown"><div class="dropdown-item" id="btn-meow">Say Meow!</div><div class="dropdown-item" id="btn-random-cat">Random Cat Sticker</div></div></div>
+                    <div class="menu-item"><span>Kittens</span><div class="dropdown"><div class="dropdown-item" id="btn-meow">Say Meow!</div><div class="dropdown-item" id="btn-random-cat">Random Cat</div></div></div>
                     <div class="menu-item"><span>Help</span><div class="dropdown"><div class="dropdown-item">About</div></div></div>
                 </div>
 
-                <!-- 2. Top Bar Controls -->
                 <div class="top-bar-controls">
                     <div class="horizontal-tool-settings">
                         <span class="options-label">Size:</span>
@@ -45,7 +41,6 @@
                     </div>
                 </div>
 
-                <!-- 3. Main Workspace -->
                 <div class="main-content">
                     <div class="sidebar-controls">
                         <div class="toolbar-frame">
@@ -57,23 +52,42 @@
                                 <div class="tool" data-tool="line" title="Yarn Line">🧶</div>
                                 <div class="tool" data-tool="rect" title="Cardboard Box">📦</div>
                                 <div class="tool" data-tool="circle" title="Ball of Fluff">◯</div>
+                                <div class="tool" data-tool="text" title="Meow Notes"><b>A</b></div>
                                 <div class="tool" data-tool="stamp" title="Cat Stamp">🐱</div>
+                            </div>
+                        </div>
+
+                        <!-- NEW: Floating Fonts Box (appears for Text Tool) -->
+                        <div id="font-toolbar" class="floating-box">
+                            <div class="floating-title">Fonts</div>
+                            <div class="floating-content">
+                                <select id="font-family">
+                                    <option value="Tahoma">Tahoma</option>
+                                    <option value="Arial">Arial</option>
+                                    <option value="Courier New">Courier</option>
+                                    <option value="Comic Sans MS">Comic Sans</option>
+                                    <option value="cursive">Meow Script</option>
+                                </select>
+                                <div class="font-styles">
+                                    <button class="style-btn" id="btn-bold"><b>B</b></button>
+                                    <button class="style-btn" id="btn-italic"><i>I</i></button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- RESTORED 3D FRAME -->
                     <div class="canvas-frame">
                         <div class="canvas-wrapper">
+                            <!-- Overlay Input for Text -->
+                            <input type="text" id="text-input-overlay" style="display:none; position:absolute; z-index:10;">
                             <canvas id="paintCanvas" width="700" height="450"></canvas>
                         </div>
                     </div>
                 </div>
 
-                <!-- 4. Palette -->
                 <div class="footer">
                     <div class="current-colors-frame">
-                        <div class="current-colors">
+                        <div class="current-colors" title="Click to Swap!">
                             <div id="bg-color-preview"></div>
                             <div id="fg-color-preview"></div>
                         </div>

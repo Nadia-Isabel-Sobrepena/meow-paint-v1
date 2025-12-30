@@ -10,6 +10,15 @@ const sizeValueDisplay = document.getElementById('size-value');
 const opacitySlider = document.getElementById('opacity-slider');
 const opacityValueDisplay = document.getElementById('opacity-value');
 
+// --- TEXT TOOL ELEMENTS ---
+const textInput = document.getElementById('text-input-overlay');
+const fontToolbar = document.getElementById('font-toolbar');
+const fontFamilySelect = document.getElementById('font-family');
+const btnBold = document.getElementById('btn-bold');
+const btnItalic = document.getElementById('btn-italic');
+let isBold = false;
+let isItalic = false;
+
 // --- BUFFER CANVAS LOGIC ---
 const bufferCanvas = document.createElement('canvas');
 const bctx = bufferCanvas.getContext('2d');
@@ -54,7 +63,15 @@ window.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); undo(); }
 });
 
-// Flood Fill
+// --- COLOR INDICATOR SWAP ---
+const colorIndicator = document.querySelector('.current-colors');
+colorIndicator.onclick = () => {
+    let temp = fgColor; fgColor = bgColor; bgColor = temp;
+    fgPreview.style.backgroundColor = fgColor; bgPreview.style.backgroundColor = bgColor;
+    statusBar.innerText = "Colors swapped! 🐾";
+};
+
+// Flood Fill logic...
 function getRgbaFromHex(hex) {
     let c = hex.substring(1).split('');
     if(c.length==3) c=[c[0],c[0],c[1],c[1],c[2],c[2]];
@@ -95,32 +112,33 @@ catColors.forEach(color => {
     palette.appendChild(swatch);
 });
 
-// --- COLOR INDICATOR SWAP FEATURE ---
-const colorIndicator = document.querySelector('.current-colors');
-colorIndicator.onclick = () => {
-    let temp = fgColor;
-    fgColor = bgColor;
-    bgColor = temp;
-    fgPreview.style.backgroundColor = fgColor;
-    bgPreview.style.backgroundColor = bgColor;
-    statusBar.innerText = "Colors swapped! 🐾";
-};
-
 toolbar.onclick = (e) => {
     const btn = e.target.closest('.tool');
     if (btn) {
         document.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
-        btn.classList.add('active'); currentTool = btn.dataset.tool;
+        btn.classList.add('active'); 
+        currentTool = btn.dataset.tool;
+        // Toggle Font Toolbar
+        fontToolbar.style.display = (currentTool === 'text') ? 'block' : 'none';
+        statusBar.innerText = `Selected: ${currentTool}`;
     }
 };
 
+// Font Style Buttons
+btnBold.onclick = () => { isBold = !isBold; btnBold.classList.toggle('active'); };
+btnItalic.onclick = () => { isItalic = !isItalic; btnItalic.classList.toggle('active'); };
+
 // --- DRAWING ENGINE ---
-canvas.oncontextmenu = (e) => e.preventDefault();
 canvas.onmousedown = (e) => {
+    if (currentTool === 'text') {
+        saveHistory();
+        placeTextInput(e.offsetX, e.offsetY);
+        return;
+    }
+    
     saveHistory();
     drawing = true;
-    startX = e.offsetX;
-    startY = e.offsetY;
+    startX = e.offsetX; startY = e.offsetY;
     snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
     bctx.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
     bctx.strokeStyle = (e.button === 2) ? bgColor : fgColor;
@@ -152,8 +170,7 @@ canvas.onmousemove = (e) => {
     if (!drawing) return;
     ctx.putImageData(snapshot, 0, 0);
     if (['pencil', 'brush', 'eraser'].includes(currentTool)) {
-        bctx.lineTo(e.offsetX, e.offsetY);
-        bctx.stroke();
+        bctx.lineTo(e.offsetX, e.offsetY); bctx.stroke();
     } else if (currentTool === 'line') {
         bctx.clearRect(0,0,bufferCanvas.width,bufferCanvas.height);
         bctx.beginPath(); bctx.moveTo(startX, startY); bctx.lineTo(e.offsetX, e.offsetY); bctx.stroke();
@@ -171,7 +188,56 @@ canvas.onmousemove = (e) => {
 
 window.onmouseup = () => drawing = false;
 
-// Dropdowns
+// --- TEXT TOOL HELPERS ---
+function placeTextInput(x, y) {
+    // Finish any current text
+    commitText();
+    
+    textInput.style.display = 'block';
+    textInput.style.left = (x + 5) + 'px';
+    textInput.style.top = (y + 5) + 'px';
+    textInput.style.fontSize = currentSize + 'px';
+    textInput.style.color = fgColor;
+    textInput.style.fontFamily = fontFamilySelect.value;
+    textInput.style.fontWeight = isBold ? 'bold' : 'normal';
+    textInput.style.fontStyle = isItalic ? 'italic' : 'normal';
+    textInput.value = '';
+    textInput.focus();
+    
+    // Save coordinates for the canvas render
+    textInput.dataset.x = x;
+    textInput.dataset.y = y;
+}
+
+function commitText() {
+    if (textInput.style.display === 'none' || textInput.value === '') {
+        textInput.style.display = 'none';
+        return;
+    }
+    
+    const x = parseInt(textInput.dataset.x);
+    const y = parseInt(textInput.dataset.y);
+    
+    ctx.globalAlpha = currentOpacity;
+    ctx.fillStyle = fgColor;
+    let fontStr = '';
+    if (isItalic) fontStr += 'italic ';
+    if (isBold) fontStr += 'bold ';
+    fontStr += `${currentSize}px ${fontFamilySelect.value}`;
+    
+    ctx.font = fontStr;
+    ctx.textBaseline = 'top';
+    ctx.fillText(textInput.value, x + 5, y + 5);
+    ctx.globalAlpha = 1.0;
+    
+    textInput.style.display = 'none';
+    textInput.value = '';
+}
+
+// Enter key to finish typing
+textInput.onkeydown = (e) => { if (e.key === 'Enter') commitText(); };
+
+// --- MENU UI ---
 document.querySelectorAll('.menu-item').forEach(item => {
     item.onclick = (e) => {
         const act = item.classList.contains('active');
@@ -179,7 +245,9 @@ document.querySelectorAll('.menu-item').forEach(item => {
         if (!act) item.classList.add('active'); e.stopPropagation();
     };
 });
-window.onclick = () => document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+window.onclick = () => {
+    document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+};
 
 document.getElementById('btn-new').onclick = () => { if(confirm("Clear?")) { saveHistory(); ctx.clearRect(0,0,canvas.width,canvas.height); } };
 document.getElementById('btn-save').onclick = () => { const l = document.createElement('a'); l.download='art.png'; l.href=canvas.toDataURL(); l.click(); };
