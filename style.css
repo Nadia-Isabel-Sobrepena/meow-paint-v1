@@ -29,8 +29,8 @@ body {
     z-index: 10000;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Center vertically */
-    align-items: center;     /* Center horizontally */
+    justify-content: center; 
+    align-items: center;     
     color: white;
     transition: opacity 0.8s ease-out;
 }
@@ -38,7 +38,7 @@ body {
 .splash-content { 
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center content within the wrapper */
+    align-items: center; 
     text-align: center; 
 }
 
@@ -56,14 +56,14 @@ body {
     width: 300px; 
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center children within box */
+    align-items: center; 
 }
 
 #loading-text { 
     font-size: 11px; 
     margin-bottom: 8px; 
     font-family: monospace; 
-    text-align: center; /* Center the text itself */
+    text-align: center; 
     width: 100%;
 }
 
@@ -80,13 +80,7 @@ body {
     background-size: 15px 100%;
 }
 
-.splash-footer {
-    position: absolute; bottom: 30px;
-    font-size: 10px; color: #666; line-height: 1.5;
-    text-align: center;
-}
-
-/* --- THE WINDOW --- */
+/* --- APP UI --- */
 .window-container { position: relative; padding-top: 35px; }
 
 .ear {
@@ -120,7 +114,7 @@ body {
 
 .size-readout {
     background: white; padding: 2px 6px; font-size: 12px; font-weight: bold;
-    color: var(--win-shadow-deep); border: 1.5px solid var(--win-shadow-deep);
+    color: var(--win-shadow-deep); border: 1px solid var(--win-shadow-deep);
     box-shadow: inset 1px 1px 0px #000; min-width: 55px; text-align: center;
 }
 
