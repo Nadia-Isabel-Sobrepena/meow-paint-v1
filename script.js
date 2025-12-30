@@ -95,6 +95,17 @@ catColors.forEach(color => {
     palette.appendChild(swatch);
 });
 
+// --- COLOR INDICATOR SWAP FEATURE ---
+const colorIndicator = document.querySelector('.current-colors');
+colorIndicator.onclick = () => {
+    let temp = fgColor;
+    fgColor = bgColor;
+    bgColor = temp;
+    fgPreview.style.backgroundColor = fgColor;
+    bgPreview.style.backgroundColor = bgColor;
+    statusBar.innerText = "Colors swapped! 🐾";
+};
+
 toolbar.onclick = (e) => {
     const btn = e.target.closest('.tool');
     if (btn) {
