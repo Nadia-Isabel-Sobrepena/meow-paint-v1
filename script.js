@@ -12,13 +12,15 @@ let drawing = false;
 let currentTool = 'pencil';
 let fgColor = '#000000';
 let bgColor = '#ffffff';
-let currentSize = 5; 
+let currentSize = 22; 
 let startX, startY, snapshot;
 
-// Slider logic
+// Update size display on load
+sizeValueDisplay.innerText = currentSize + "px";
+
 brushSlider.addEventListener('input', (e) => {
     currentSize = e.target.value;
-    sizeValueDisplay.innerText = currentSize;
+    sizeValueDisplay.innerText = currentSize + "px";
 });
 
 // Undo Logic
@@ -41,12 +43,15 @@ window.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); undo(); }
 });
 
-// Flood Fill Robust
 function getRgbaFromHex(hex) {
-    let c = hex.substring(1).split('');
-    if (c.length == 3) c = [c[0], c[0], c[1], c[1], c[2], c[2]];
-    c = '0x' + c.join('');
-    return [(c>>16)&255, (c>>8)&255, c&255, 255];
+    let c;
+    if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+        c= hex.substring(1).split('');
+        if(c.length== 3) c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+        c= '0x' + c.join('');
+        return [(c>>16)&255, (c>>8)&255, c&255, 255];
+    }
+    return [0, 0, 0, 255]; 
 }
 
 function floodFill(x, y, fillRgba) {
@@ -71,7 +76,6 @@ function floodFill(x, y, fillRgba) {
     ctx.putImageData(imageData, 0, 0);
 }
 
-// Build Palette
 const catColors = ['#000000','#8c7b75','#ff8a80','#ffd180','#a5d6a7','#80deea','#9fa8da','#ce93d8','#f48fb1','#ffffff','#ffcdd2','#f8bbd0','#e1bee7','#d1c4e9','#c5cae9','#bbdefb','#b3e5fc','#b2ebf2','#b2dfdb','#c8e6c9','#dcedc8','#f0f4c3','#fff9c4','#ffecb3','#ffe0b2','#ffccbc','#d7ccc8','#f5f5f5'];
 catColors.forEach(color => {
     const swatch = document.createElement('div');
@@ -83,30 +87,26 @@ catColors.forEach(color => {
     palette.appendChild(swatch);
 });
 
-// Tool Switching
 toolbar.onclick = (e) => {
     const btn = e.target.closest('.tool');
     if (btn) {
         document.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
         btn.classList.add('active'); currentTool = btn.dataset.tool;
-        statusBar.innerText = `Selected Tool: ${currentTool}`;
     }
 };
 
-// Canvas Logic
 canvas.oncontextmenu = (e) => e.preventDefault();
 canvas.onmousedown = (e) => {
     saveHistory(); drawing = true; startX = e.offsetX; startY = e.offsetY;
     snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = (e.button === 2) ? bgColor : fgColor;
     ctx.fillStyle = (e.button === 2) ? bgColor : fgColor;
-    
     if (currentTool === 'fill') {
         floodFill(startX, startY, getRgbaFromHex(ctx.fillStyle));
         drawing = false; return;
     }
     ctx.lineWidth = currentSize; ctx.lineCap = 'round';
-    if (currentTool === 'pencil' || currentTool === 'brush' || currentTool === 'eraser') ctx.beginPath();
+    if (['pencil', 'brush', 'eraser'].includes(currentTool)) ctx.beginPath();
     if (currentTool === 'stamp') {
         ctx.font = `${currentSize * 4}px serif`;
         ctx.fillText('🐱', startX - (currentSize * 2), startY + (currentSize * 1.5));
@@ -127,7 +127,6 @@ canvas.onmousemove = (e) => {
 };
 window.onmouseup = () => drawing = false;
 
-// UI Menus
 document.querySelectorAll('.menu-item').forEach(item => {
     item.onclick = (e) => {
         const act = item.classList.contains('active');
@@ -137,10 +136,10 @@ document.querySelectorAll('.menu-item').forEach(item => {
 });
 window.onclick = () => document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
 
-document.getElementById('btn-new').onclick = () => { if(confirm("Clear canvas?")) { saveHistory(); ctx.clearRect(0,0,canvas.width,canvas.height); } };
+document.getElementById('btn-new').onclick = () => { if(confirm("Clear?")) { saveHistory(); ctx.clearRect(0,0,canvas.width,canvas.height); } };
 document.getElementById('btn-save').onclick = () => { const l = document.createElement('a'); l.download='art.png'; l.href=canvas.toDataURL(); l.click(); };
 document.getElementById('btn-undo').onclick = () => undo();
-document.getElementById('btn-meow').onclick = () => { alert("MEOW! 🐾"); statusBar.innerText = "The cat said hi!"; };
+document.getElementById('btn-meow').onclick = () => alert("MEOW!");
 document.getElementById('btn-random-cat').onclick = () => {
     saveHistory(); const cats = ['🐱', '🐈', '😸', '😹', '😻', '😼', '😽', '😾', '😿', '🙀'];
     const x = Math.random() * (canvas.width - 60); const y = 40 + Math.random() * (canvas.height - 60);
