@@ -25,35 +25,16 @@ window.addEventListener('DOMContentLoaded', () => {
     const splash = document.getElementById('splash-screen');
     const bar = document.getElementById('progress-bar');
     const loadText = document.getElementById('loading-text');
-    
-    const messages = [
-        "Finding Catnip...",
-        "Sharpening Claws...",
-        "Waking up the kittens...",
-        "Loading Meowsoft Windows 98...",
-        "Ready for mischief!"
-    ];
-    
-    let progress = 0;
-    let msgIndex = 0;
-    
+    const messages = ["Finding Catnip...", "Sharpening Claws...", "Waking up the kittens...", "Loading Meowsoft Windows 98...", "Ready for mischief!"];
+    let progress = 0; let msgIndex = 0;
     const interval = setInterval(() => {
         progress += Math.random() * 15;
         if (progress > 100) progress = 100;
-        
         bar.style.width = progress + "%";
-        
-        if (progress > (msgIndex + 1) * 20 && msgIndex < messages.length - 1) {
-            msgIndex++;
-            loadText.innerText = messages[msgIndex];
-        }
-        
+        if (progress > (msgIndex + 1) * 20 && msgIndex < messages.length - 1) { msgIndex++; loadText.innerText = messages[msgIndex]; }
         if (progress === 100) {
             clearInterval(interval);
-            setTimeout(() => {
-                splash.style.opacity = "0";
-                setTimeout(() => splash.style.display = "none", 800);
-            }, 500);
+            setTimeout(() => { splash.style.opacity = "0"; setTimeout(() => splash.style.display = "none", 800); }, 500);
         }
     }, 200);
 });
@@ -156,23 +137,11 @@ toolbar.onclick = (e) => {
     }
 };
 
+// --- DRAWING LOGIC ---
 canvas.onmousedown = (e) => {
-    if (currentTool === 'text') {
-        commitText(); placeTextInput(e.offsetX, e.offsetY); return;
-    }
-    
-    // Determine which color to use based on click (Left vs Right)
+    if (currentTool === 'text') { commitText(); placeTextInput(e.offsetX, e.offsetY); return; }
     const colorToUse = (e.button === 2) ? bgColor : fgColor;
-    
-    // --- SPECIAL FILL TOOL CHECK (FIXED) ---
-    if (currentTool === 'fill') {
-        saveHistory();
-        const rgbaArr = getRgbaFromHex(colorToUse);
-        floodFill(e.offsetX, e.offsetY, rgbaArr);
-        drawing = false; 
-        return;
-    }
-
+    if (currentTool === 'fill') { saveHistory(); floodFill(e.offsetX, e.offsetY, getRgbaFromHex(colorToUse)); return; }
     saveHistory();
     drawing = true;
     startX = e.offsetX; startY = e.offsetY;
@@ -180,27 +149,28 @@ canvas.onmousedown = (e) => {
     bctx.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
     bctx.strokeStyle = colorToUse;
     bctx.fillStyle = colorToUse;
-
-    if (currentTool === 'pencil') {
-        bctx.lineCap = 'square'; bctx.lineWidth = Math.max(1, currentSize / 5);
-    } else {
-        bctx.lineCap = 'round'; bctx.lineJoin = 'round'; bctx.lineWidth = currentSize;
-    }
+    if (currentTool === 'pencil') { bctx.lineCap = 'square'; bctx.lineWidth = Math.max(1, currentSize / 5); } 
+    else { bctx.lineCap = 'round'; bctx.lineJoin = 'round'; bctx.lineWidth = currentSize; }
     if (currentTool === 'eraser') { bctx.strokeStyle = '#ffffff'; }
-
-    if (['pencil', 'brush', 'eraser'].includes(currentTool)) {
-        bctx.beginPath(); bctx.moveTo(startX, startY);
-    }
+    if (['pencil', 'brush', 'eraser'].includes(currentTool)) { bctx.beginPath(); bctx.moveTo(startX, startY); }
     if (currentTool === 'stamp') {
-        ctx.globalAlpha = currentOpacity;
-        ctx.font = `${currentSize * 4}px serif`;
+        ctx.globalAlpha = currentOpacity; ctx.font = `${currentSize * 4}px serif`;
         ctx.fillText('🐱', startX - (currentSize * 2), startY + (currentSize * 1.5));
-        ctx.globalAlpha = 1.0;
-        drawing = false;
+        ctx.globalAlpha = 1.0; drawing = false;
     }
 };
 
-canvas.onmousemove = (e) => {
+// Use addEventListener for global mouse moves and ups to prevent slider "sticking"
+window.addEventListener('mousemove', (e) => {
+    if (isDraggingText) {
+        let newX = e.clientX - textDragStartX;
+        let newY = e.clientY - textDragStartY;
+        textInput.style.left = newX + 'px';
+        textInput.style.top = newY + 'px';
+        textInput.dataset.x = newX; 
+        textInput.dataset.y = newY;
+    }
+
     if (!drawing) return;
     ctx.putImageData(snapshot, 0, 0);
     if (['pencil', 'brush', 'eraser'].includes(currentTool)) {
@@ -219,18 +189,16 @@ canvas.onmousemove = (e) => {
     ctx.globalAlpha = currentOpacity;
     ctx.drawImage(bufferCanvas, 0, 0);
     ctx.globalAlpha = 1.0;
-};
-window.onmouseup = () => drawing = false;
+});
+
+window.addEventListener('mouseup', () => {
+    drawing = false;
+    isDraggingText = false;
+});
 
 function placeTextInput(x, y) {
-    textInput.style.display = 'block';
-    textInput.style.left = x + 'px';
-    textInput.style.top = y + 'px';
-    textInput.dataset.x = x;
-    textInput.dataset.y = y;
-    textInput.value = '';
-    updateLiveTextPreview();
-    textInput.focus();
+    textInput.style.display = 'block'; textInput.style.left = x + 'px'; textInput.style.top = y + 'px';
+    textInput.dataset.x = x; textInput.dataset.y = y; textInput.value = ''; updateLiveTextPreview(); textInput.focus();
 }
 
 textInput.onmousedown = (e) => {
@@ -239,45 +207,29 @@ textInput.onmousedown = (e) => {
     textDragStartY = e.clientY - textInput.offsetTop;
 };
 
-window.addEventListener('mousemove', (e) => {
-    if (!isDraggingText) return;
-    let newX = e.clientX - textDragStartX;
-    let newY = e.clientY - textDragStartY;
-    textInput.style.left = newX + 'px';
-    textInput.style.top = newY + 'px';
-    textInput.dataset.x = newX; 
-    textInput.dataset.y = newY;
-});
-window.addEventListener('mouseup', () => isDraggingText = false);
-
 function commitText() {
-    if (textInput.style.display === 'none' || textInput.value === '') {
-        textInput.style.display = 'none'; return;
-    }
+    if (textInput.style.display === 'none' || textInput.value === '') { textInput.style.display = 'none'; return; }
     saveHistory();
-    const x = parseInt(textInput.dataset.x);
-    let y = parseInt(textInput.dataset.y);
-    ctx.globalAlpha = currentOpacity;
-    ctx.fillStyle = fgColor;
-    let fontStr = '';
-    if (isItalic) fontStr += 'italic ';
-    if (isBold) fontStr += 'bold ';
+    const x = parseInt(textInput.dataset.x); let y = parseInt(textInput.dataset.y);
+    ctx.globalAlpha = currentOpacity; ctx.fillStyle = fgColor;
+    let fontStr = ''; if (isItalic) fontStr += 'italic '; if (isBold) fontStr += 'bold ';
     fontStr += `${currentSize}px ${fontFamilySelect.value}`;
-    ctx.font = fontStr;
-    ctx.textBaseline = 'top';
-    const lines = textInput.value.split('\n');
-    const lineHeight = currentSize * 1.2;
-    lines.forEach((line, index) => {
-        ctx.fillText(line, x + 2, y + 2 + (index * lineHeight));
-    });
-    ctx.globalAlpha = 1.0;
-    textInput.style.display = 'none';
-    textInput.value = '';
+    ctx.font = fontStr; ctx.textBaseline = 'top';
+    const lines = textInput.value.split('\n'); const lineHeight = currentSize * 1.2;
+    lines.forEach((line, index) => { ctx.fillText(line, x + 2, y + 2 + (index * lineHeight)); });
+    ctx.globalAlpha = 1.0; textInput.style.display = 'none'; textInput.value = '';
 }
 
 textInput.onkeydown = (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { commitText(); } };
-window.addEventListener('mousedown', (e) => { if (e.target !== textInput && e.target !== canvas && !fontToolbar.contains(e.target)) { commitText(); } });
 
+// --- FIXED: GLOBAL CLICK-OFF LOGIC ---
+window.addEventListener('mousedown', (e) => {
+    // If we click a range input (slider), don't trigger text commit logic
+    if (e.target.type === 'range') return;
+    if (e.target !== textInput && e.target !== canvas && !fontToolbar.contains(e.target)) { commitText(); } 
+});
+
+// Dropdowns
 document.querySelectorAll('.menu-item').forEach(item => {
     item.onclick = (e) => {
         const act = item.classList.contains('active');
@@ -294,56 +246,32 @@ document.getElementById('btn-meow').onclick = () => alert("MEOW!");
 document.getElementById('btn-random-cat').onclick = () => {
     saveHistory(); const cats = ['🐱', '🐈', '😸', '😹', '😻', '😼', '😽', '😾', '😿', '🙀'];
     const x = Math.random() * (canvas.width - 60); const y = 40 + Math.random() * (canvas.height - 60);
-    ctx.globalAlpha = currentOpacity;
-    ctx.font = '50px serif'; ctx.fillText(cats[Math.floor(Math.random()*cats.length)], x, y);
+    ctx.globalAlpha = currentOpacity; ctx.font = '50px serif'; 
+    ctx.fillText(cats[Math.floor(Math.random()*cats.length)], x, y);
     ctx.globalAlpha = 1.0;
 };
 
-// --- IMPROVED COLOR HELPER (Works with RGB and HEX) ---
 function getRgbaFromHex(hex) {
-    // If it's already an array/rgba, return it
     if (Array.isArray(hex)) return hex;
-    
-    // Simple hex conversion
     let c = hex.substring(1).split('');
     if(c.length==3) c=[c[0],c[0],c[1],c[1],c[2],c[2]];
     c='0x'+c.join('');
     return [(c>>16)&255, (c>>8)&255, c&255, 255];
 }
 
-// --- RELIABLE FLOOD FILL ---
 function floodFill(x, y, fillRgba) {
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData.data;
-    const width = canvas.width;
-    
+    const data = imageData.data; const width = canvas.width;
     const targetIdx = (y * width + x) * 4;
-    const targetR = data[targetIdx];
-    const targetG = data[targetIdx + 1];
-    const targetB = data[targetIdx + 2];
-    const targetA = data[targetIdx + 3];
-
-    // Don't fill if clicking the same color
-    if (targetR === fillRgba[0] && targetG === fillRgba[1] && 
-        targetB === fillRgba[2] && targetA === fillRgba[3]) return;
-
+    const targetR = data[targetIdx]; const targetG = data[targetIdx + 1]; const targetB = data[targetIdx + 2]; const targetA = data[targetIdx + 3];
+    if (targetR === fillRgba[0] && targetG === fillRgba[1] && targetB === fillRgba[2] && targetA === fillRgba[3]) return;
     const stack = [[x, y]];
     while (stack.length > 0) {
-        const [currX, currY] = stack.pop();
-        const currIdx = (currY * width + currX) * 4;
-
-        if (data[currIdx] === targetR && data[currIdx + 1] === targetG && 
-            data[currIdx + 2] === targetB && data[currIdx + 3] === targetA) {
-            
-            data[currIdx] = fillRgba[0];
-            data[currIdx + 1] = fillRgba[1];
-            data[currIdx + 2] = fillRgba[2];
-            data[currIdx + 3] = fillRgba[3];
-
-            if (currX > 0) stack.push([currX - 1, currY]);
-            if (currX < canvas.width - 1) stack.push([currX + 1, currY]);
-            if (currY > 0) stack.push([currX, currY - 1]);
-            if (currY < canvas.height - 1) stack.push([currX, currY + 1]);
+        const [currX, currY] = stack.pop(); const currIdx = (currY * width + currX) * 4;
+        if (data[currIdx] === targetR && data[currIdx + 1] === targetG && data[currIdx + 2] === targetB && data[currIdx + 3] === targetA) {
+            data[currIdx] = fillRgba[0]; data[currIdx + 1] = fillRgba[1]; data[currIdx + 2] = fillRgba[2]; data[currIdx + 3] = fillRgba[3];
+            if (currX > 0) stack.push([currX - 1, currY]); if (currX < canvas.width - 1) stack.push([currX + 1, currY]);
+            if (currY > 0) stack.push([currX, currY - 1]); if (currY < canvas.height - 1) stack.push([currX, currY + 1]);
         }
     }
     ctx.putImageData(imageData, 0, 0);
