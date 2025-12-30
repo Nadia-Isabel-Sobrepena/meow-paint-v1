@@ -53,17 +53,8 @@ opacitySlider.addEventListener('input', (e) => {
 
 fontFamilySelect.addEventListener('change', updateLiveTextPreview);
 
-btnBold.onclick = () => { 
-    isBold = !isBold; 
-    btnBold.classList.toggle('active'); 
-    updateLiveTextPreview(); 
-};
-
-btnItalic.onclick = () => { 
-    isItalic = !isItalic; 
-    btnItalic.classList.toggle('active'); 
-    updateLiveTextPreview(); 
-};
+btnBold.onclick = () => { isBold = !isBold; btnBold.classList.toggle('active'); updateLiveTextPreview(); };
+btnItalic.onclick = () => { isItalic = !isItalic; btnItalic.classList.toggle('active'); updateLiveTextPreview(); };
 
 function updateLiveTextPreview() {
     if (textInput.style.display === 'block') {
@@ -73,8 +64,17 @@ function updateLiveTextPreview() {
         textInput.style.fontSize = currentSize + "px";
         textInput.style.color = fgColor;
         textInput.style.opacity = currentOpacity;
+        
+        // Auto-expand textarea height
+        textInput.style.height = 'auto';
+        textInput.style.height = textInput.scrollHeight + 'px';
+        textInput.style.width = 'auto';
+        textInput.style.width = (textInput.scrollWidth + 10) + 'px';
     }
 }
+
+// Update height on typing
+textInput.addEventListener('input', updateLiveTextPreview);
 
 // --- 2. UNDO SYSTEM ---
 let undoStack = [];
@@ -118,7 +118,7 @@ catColors.forEach(color => {
 toolbar.onclick = (e) => {
     const btn = e.target.closest('.tool');
     if (btn) {
-        if (currentTool === 'text') commitText(); // Bake text before switching
+        if (currentTool === 'text') commitText(); 
         document.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
         btn.classList.add('active'); 
         currentTool = btn.dataset.tool;
@@ -130,7 +130,7 @@ toolbar.onclick = (e) => {
 // --- 5. DRAWING ENGINE ---
 canvas.onmousedown = (e) => {
     if (currentTool === 'text') {
-        commitText(); // Finalize previous text
+        commitText(); 
         placeTextInput(e.offsetX, e.offsetY);
         return;
     }
@@ -189,42 +189,35 @@ canvas.onmousemove = (e) => {
 
 window.onmouseup = () => drawing = false;
 
-// --- 6. TEXT TOOL LOGIC (DRAGGABLE & LIVE) ---
+// --- 6. MULTI-LINE TEXT TOOL LOGIC ---
 function placeTextInput(x, y) {
     textInput.style.display = 'block';
     textInput.style.left = x + 'px';
     textInput.style.top = y + 'px';
     textInput.dataset.x = x;
     textInput.dataset.y = y;
-    updateLiveTextPreview();
     textInput.value = '';
+    updateLiveTextPreview();
     textInput.focus();
 }
 
-// DRAGGING LOGIC FOR THE TEXT BOX
 textInput.onmousedown = (e) => {
     isDraggingText = true;
     textDragStartX = e.clientX - textInput.offsetLeft;
     textDragStartY = e.clientY - textInput.offsetTop;
-    textInput.style.cursor = 'move';
 };
 
 window.addEventListener('mousemove', (e) => {
     if (!isDraggingText) return;
-    const rect = canvas.getBoundingClientRect();
     let newX = e.clientX - textDragStartX;
     let newY = e.clientY - textDragStartY;
-    
     textInput.style.left = newX + 'px';
     textInput.style.top = newY + 'px';
     textInput.dataset.x = newX; 
     textInput.dataset.y = newY;
 });
 
-window.addEventListener('mouseup', () => {
-    isDraggingText = false;
-    textInput.style.cursor = 'text';
-});
+window.addEventListener('mouseup', () => isDraggingText = false);
 
 function commitText() {
     if (textInput.style.display === 'none' || textInput.value === '') {
@@ -233,35 +226,45 @@ function commitText() {
     }
     saveHistory();
     const x = parseInt(textInput.dataset.x);
-    const y = parseInt(textInput.dataset.y);
+    let y = parseInt(textInput.dataset.y);
     
     ctx.globalAlpha = currentOpacity;
     ctx.fillStyle = fgColor;
+    
     let fontStr = '';
     if (isItalic) fontStr += 'italic ';
     if (isBold) fontStr += 'bold ';
     fontStr += `${currentSize}px ${fontFamilySelect.value}`;
-    
     ctx.font = fontStr;
     ctx.textBaseline = 'top';
-    // Offset slightly for the padding of the input
-    ctx.fillText(textInput.value, x + 2, y + 2);
+
+    // MULTI-LINE LOGIC: Split the value by newlines
+    const lines = textInput.value.split('\n');
+    const lineHeight = currentSize * 1.2; // Add a bit of spacing between lines
+
+    lines.forEach((line, index) => {
+        ctx.fillText(line, x + 2, y + 2 + (index * lineHeight));
+    });
+
     ctx.globalAlpha = 1.0;
-    
     textInput.style.display = 'none';
     textInput.value = '';
 }
 
-textInput.onkeydown = (e) => { if (e.key === 'Enter') commitText(); };
+// Use Ctrl+Enter to finalize text easily
+textInput.onkeydown = (e) => { 
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        commitText();
+    }
+};
 
-// Close text if clicking canvas while tool is NOT text
 window.addEventListener('mousedown', (e) => {
     if (e.target !== textInput && e.target !== canvas && !fontToolbar.contains(e.target)) {
         commitText();
     }
 });
 
-// --- 7. UI DROPDOWNS & MENUS ---
+// UI Dropdowns & Menu Buttons
 document.querySelectorAll('.menu-item').forEach(item => {
     item.onclick = (e) => {
         const act = item.classList.contains('active');
@@ -289,25 +292,4 @@ function getRgbaFromHex(hex) {
     if(c.length==3) c=[c[0],c[0],c[1],c[1],c[2],c[2]];
     c='0x'+c.join('');
     return [(c>>16)&255, (c>>8)&255, c&255, 255];
-}
-function floodFill(x, y, fillRgba) {
-    const imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
-    const data = imageData.data;
-    const width = canvas.width;
-    const targetIdx = (y*width+x)*4;
-    const [tr, tg, tb, ta] = [data[targetIdx], data[targetIdx+1], data[targetIdx+2], data[targetIdx+3]];
-    if(tr===fillRgba[0] && tg===fillRgba[1] && tb===fillRgba[2] && ta===fillRgba[3]) return;
-    const stack = [[x, y]];
-    while(stack.length > 0) {
-        const [cx, cy] = stack.pop();
-        const ci = (cy*width+cx)*4;
-        if(data[ci]===tr && data[ci+1]===tg && data[ci+2]===tb && data[ci+3]===ta) {
-            data[ci]=fillRgba[0]; data[ci+1]=fillRgba[1]; data[ci+2]=fillRgba[2]; data[ci+3]=fillRgba[3];
-            if(cx>0) stack.push([cx-1, cy]);
-            if(cx<width-1) stack.push([cx+1, cy]);
-            if(cy>0) stack.push([cx, cy-1]);
-            if(cy<canvas.height-1) stack.push([cx, cy+1]);
-        }
-    }
-    ctx.putImageData(imageData, 0, 0);
 }
