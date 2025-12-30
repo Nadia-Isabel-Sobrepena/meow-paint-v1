@@ -160,23 +160,34 @@ canvas.onmousedown = (e) => {
     if (currentTool === 'text') {
         commitText(); placeTextInput(e.offsetX, e.offsetY); return;
     }
+    
+    // Determine which color to use based on click (Left vs Right)
+    const colorToUse = (e.button === 2) ? bgColor : fgColor;
+    
+    // --- SPECIAL FILL TOOL CHECK (FIXED) ---
+    if (currentTool === 'fill') {
+        saveHistory();
+        const rgbaArr = getRgbaFromHex(colorToUse);
+        floodFill(e.offsetX, e.offsetY, rgbaArr);
+        drawing = false; 
+        return;
+    }
+
     saveHistory();
     drawing = true;
     startX = e.offsetX; startY = e.offsetY;
     snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
     bctx.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
-    bctx.strokeStyle = (e.button === 2) ? bgColor : fgColor;
-    bctx.fillStyle = (e.button === 2) ? bgColor : fgColor;
+    bctx.strokeStyle = colorToUse;
+    bctx.fillStyle = colorToUse;
+
     if (currentTool === 'pencil') {
         bctx.lineCap = 'square'; bctx.lineWidth = Math.max(1, currentSize / 5);
     } else {
         bctx.lineCap = 'round'; bctx.lineJoin = 'round'; bctx.lineWidth = currentSize;
     }
     if (currentTool === 'eraser') { bctx.strokeStyle = '#ffffff'; }
-    if (currentTool === 'fill') {
-        floodFill(startX, startY, getRgbaFromHex(bctx.fillStyle));
-        drawing = false; return;
-    }
+
     if (['pencil', 'brush', 'eraser'].includes(currentTool)) {
         bctx.beginPath(); bctx.moveTo(startX, startY);
     }
@@ -288,9 +299,52 @@ document.getElementById('btn-random-cat').onclick = () => {
     ctx.globalAlpha = 1.0;
 };
 
+// --- IMPROVED COLOR HELPER (Works with RGB and HEX) ---
 function getRgbaFromHex(hex) {
+    // If it's already an array/rgba, return it
+    if (Array.isArray(hex)) return hex;
+    
+    // Simple hex conversion
     let c = hex.substring(1).split('');
     if(c.length==3) c=[c[0],c[0],c[1],c[1],c[2],c[2]];
     c='0x'+c.join('');
     return [(c>>16)&255, (c>>8)&255, c&255, 255];
+}
+
+// --- RELIABLE FLOOD FILL ---
+function floodFill(x, y, fillRgba) {
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+    const width = canvas.width;
+    
+    const targetIdx = (y * width + x) * 4;
+    const targetR = data[targetIdx];
+    const targetG = data[targetIdx + 1];
+    const targetB = data[targetIdx + 2];
+    const targetA = data[targetIdx + 3];
+
+    // Don't fill if clicking the same color
+    if (targetR === fillRgba[0] && targetG === fillRgba[1] && 
+        targetB === fillRgba[2] && targetA === fillRgba[3]) return;
+
+    const stack = [[x, y]];
+    while (stack.length > 0) {
+        const [currX, currY] = stack.pop();
+        const currIdx = (currY * width + currX) * 4;
+
+        if (data[currIdx] === targetR && data[currIdx + 1] === targetG && 
+            data[currIdx + 2] === targetB && data[currIdx + 3] === targetA) {
+            
+            data[currIdx] = fillRgba[0];
+            data[currIdx + 1] = fillRgba[1];
+            data[currIdx + 2] = fillRgba[2];
+            data[currIdx + 3] = fillRgba[3];
+
+            if (currX > 0) stack.push([currX - 1, currY]);
+            if (currX < canvas.width - 1) stack.push([currX + 1, currY]);
+            if (currY > 0) stack.push([currX, currY - 1]);
+            if (currY < canvas.height - 1) stack.push([currX, currY + 1]);
+        }
+    }
+    ctx.putImageData(imageData, 0, 0);
 }
