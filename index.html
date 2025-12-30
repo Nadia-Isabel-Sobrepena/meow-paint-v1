@@ -8,20 +8,37 @@
 </head>
 <body>
 
+<!-- NEW: STARTUP SPLASH SCREEN -->
+<div id="splash-screen">
+    <div class="splash-content">
+        <div class="splash-logo">🐾 Meow Paint</div>
+        <div class="splash-sub">Version 98.cat</div>
+        
+        <div class="loading-box">
+            <div id="loading-text">Starting Kitten Modules...</div>
+            <div class="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+        </div>
+        
+        <div class="splash-footer">
+            Copyright &copy; 1998-2025 Meowsoft Corporation<br>
+            Vibe Coded with Google AI Studio
+        </div>
+    </div>
+</div>
+
 <div class="desktop">
     <div class="window-container">
-        <!-- Decorative Cat Ears -->
         <div class="ear left"></div>
         <div class="ear right"></div>
         
         <div class="window">
-            <!-- Title Bar -->
             <div class="title-bar">
                 <div class="title-text">🐾 untitled - Meow Paint</div>
             </div>
 
             <div id="window-body">
-                <!-- 1. Menu Bar -->
                 <div class="menu-bar">
                     <div class="menu-item"><span>File</span><div class="dropdown"><div class="dropdown-item" id="btn-new">New</div><div class="dropdown-item" id="btn-save">Save</div></div></div>
                     <div class="menu-item"><span>Edit</span><div class="dropdown"><div class="dropdown-item" id="btn-undo">Undo</div></div></div>
@@ -30,7 +47,6 @@
                     <div class="menu-item"><span>Help</span><div class="dropdown"><div class="dropdown-item">About</div></div></div>
                 </div>
 
-                <!-- 2. Top Bar Controls -->
                 <div class="top-bar-controls">
                     <div class="horizontal-tool-settings">
                         <span class="options-label">Size:</span>
@@ -45,7 +61,6 @@
                     </div>
                 </div>
 
-                <!-- 3. Main Workspace -->
                 <div class="main-content">
                     <div class="sidebar-controls">
                         <div class="toolbar-frame">
@@ -82,7 +97,6 @@
 
                     <div class="canvas-frame">
                         <div class="canvas-wrapper">
-                            <!-- CHANGED: input to textarea for multi-line support -->
                             <textarea id="text-input-overlay" style="display:none; position:absolute; z-index:10;"></textarea>
                             <canvas id="paintCanvas" width="700" height="450"></canvas>
                         </div>

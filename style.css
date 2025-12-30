@@ -19,8 +19,57 @@ body {
     align-items: center;
     height: 100vh;
     overflow: hidden;
-    cursor: default;
 }
+
+/* --- SPLASH SCREEN STYLES --- */
+#splash-screen {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: #000000; /* Real 98 splash screens had black backgrounds */
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    transition: opacity 0.8s ease-out;
+}
+
+.splash-content { text-align: center; }
+
+.splash-logo {
+    font-size: 48px;
+    font-weight: bold;
+    color: var(--accent-pink);
+    text-shadow: 2px 2px 0px white;
+    margin-bottom: 5px;
+}
+
+.splash-sub { font-size: 14px; letter-spacing: 2px; margin-bottom: 40px; color: var(--win-shadow); }
+
+.loading-box { width: 300px; text-align: left; }
+#loading-text { font-size: 11px; margin-bottom: 5px; font-family: monospace; }
+
+.progress-container {
+    width: 100%; height: 16px;
+    background: #000;
+    border: 1px solid #888;
+    position: relative;
+}
+
+#progress-bar {
+    height: 100%; width: 0%;
+    /* Classic 98 Progress Bar Gradient (Blue in original, Pink for you) */
+    background: linear-gradient(90deg, var(--accent-pink) 0%, var(--win-shadow-deep) 100%);
+    background-size: 15px 100%; /* Creates the "block" look */
+}
+
+.splash-footer {
+    position: absolute; bottom: 30px;
+    font-size: 10px; color: #666; line-height: 1.5;
+}
+
+/* ... REST OF YOUR EXISTING CSS ... */
 
 .window-container { position: relative; padding-top: 35px; }
 
@@ -37,62 +86,26 @@ body {
 }
 
 .window {
-    background-color: var(--win-bg);
-    border: 2.5px solid var(--win-white);
-    outline: 1.5px solid var(--win-shadow-deep);
-    box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
-    width: fit-content; 
-    display: flex;
-    flex-direction: column;
-    padding: 2px;
+    background-color: var(--win-bg); border: 2.5px solid var(--win-white);
+    outline: 1.5px solid var(--win-shadow-deep); width: fit-content; 
+    display: flex; flex-direction: column; padding: 2px;
 }
 
 .title-bar {
     background: linear-gradient(90deg, #ffb7c5, #f48fb1);
-    padding: 6px 10px;
-    font-weight: bold;
-    color: white;
-    font-size: 15px;
-    margin-bottom: 2px;
+    padding: 6px 10px; font-weight: bold; color: white; font-size: 15px; margin-bottom: 2px;
 }
 
 .menu-bar { font-size: 12px; padding: 2px 0; display: flex; border-bottom: 1px solid var(--win-shadow); margin-bottom: 2px; }
 .menu-item { padding: 3px 15px; cursor: pointer; position: relative; color: var(--win-shadow-deep); font-weight: bold; }
 
-.dropdown {
-    display: none; position: absolute; top: 100%; left: 0; z-index: 100;
-    background: var(--win-bg); border: 1.5px solid var(--win-shadow-deep);
-    box-shadow: inset 1px 1px 0px var(--win-white), 4px 4px 0px rgba(0,0,0,0.1);
-    min-width: 160px;
-}
-.menu-item.active .dropdown { display: block; }
-.dropdown-item { padding: 8px 18px; color: var(--win-shadow-deep); font-weight: normal; }
-.dropdown-item:hover { background: var(--accent-pink); color: white; }
-
-.top-bar-controls {
-    background-color: var(--win-bg);
-    padding: 10px;
-    border-bottom: 1.5px solid var(--win-shadow-deep);
-}
-
-.horizontal-tool-settings {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: var(--win-bg);
-    padding: 4px 10px;
-}
+.top-bar-controls { background-color: var(--win-bg); padding: 10px; border-bottom: 1.5px solid var(--win-shadow-deep); }
+.horizontal-tool-settings { display: flex; align-items: center; gap: 12px; background: var(--win-bg); padding: 4px 10px; }
 
 .size-readout {
-    background: white;
-    padding: 2px 6px;
-    font-size: 12px;
-    font-weight: bold;
-    color: var(--win-shadow-deep);
-    border: 1px solid var(--win-shadow-deep);
-    box-shadow: inset 1px 1px 0px #000;
-    min-width: 55px;
-    text-align: center;
+    background: white; padding: 2px 6px; font-size: 12px; font-weight: bold;
+    color: var(--win-shadow-deep); border: 1.5px solid var(--win-shadow-deep);
+    box-shadow: inset 1px 1px 0px #000; min-width: 55px; text-align: center;
 }
 
 .options-label { font-size: 12px; font-weight: bold; color: var(--win-shadow-deep); }
@@ -107,47 +120,25 @@ input[type="range"]::-webkit-slider-thumb {
 
 .main-content { display: flex; padding: 15px; gap: 15px; background-color: var(--win-bg); }
 .sidebar-controls { display: flex; flex-direction: column; width: 85px; gap: 10px; }
-
-.toolbar-frame {
-    padding: 3px;
-    border: 1.5px solid var(--win-shadow-deep);
-    box-shadow: inset 1px 1px 0px var(--win-white);
-    background-color: var(--win-bg);
-}
-
+.toolbar-frame { padding: 3px; border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white); background-color: var(--win-bg);}
 .toolbar { display: grid; grid-template-columns: repeat(2, var(--tool-size)); grid-auto-rows: var(--tool-size); gap: 0px; }
 
 .tool {
-    background-color: var(--win-bg);
-    display: flex; justify-content: center; align-items: center; 
-    font-size: 24px; cursor: pointer;
-    border: 1px solid var(--win-bg);
-    box-shadow: inset 2px 2px 0px var(--win-white), 1.5px 1.5px 0px var(--win-shadow-deep);
+    background-color: var(--win-bg); display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer;
+    border: 1px solid var(--win-bg); box-shadow: inset 2px 2px 0px var(--win-white), 1.5px 1.5px 0px var(--win-shadow-deep);
 }
 
 .tool.active {
-    background-image: radial-gradient(rgba(255,255,255,0.8) 25%, transparent 25%), 
-                      radial-gradient(rgba(255,255,255,0.8) 25%, transparent 25%);
-    background-position: 0 0, 1px 1px; background-size: 2px 2px;
-    border: 1.5px solid var(--win-shadow-deep);
-    box-shadow: inset 2px 2px 0px var(--win-shadow-deep);
-    padding-top: 2px; padding-left: 2px;
+    background-image: radial-gradient(rgba(255,255,255,0.8) 25%, transparent 25%), radial-gradient(rgba(255,255,255,0.8) 25%, transparent 25%);
+    background-position: 0 0, 1px 1px; background-size: 2px 2px; border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 2px 2px 0px var(--win-shadow-deep); padding-top: 2px; padding-left: 2px;
 }
 
 .sidebar-font-box {
-    display: none; 
-    width: 85px;
-    background: var(--win-bg);
-    border-top: 1.5px solid var(--win-white);
-    border-left: 1.5px solid var(--win-white);
-    border-right: 1.5px solid var(--win-shadow-deep);
-    border-bottom: 1.5px solid var(--win-shadow-deep);
-    padding: 2px;
+    display: none; width: 85px; background: var(--win-bg); padding: 2px;
+    border-top: 1.5px solid var(--win-white); border-left: 1.5px solid var(--win-white);
+    border-right: 1.5px solid var(--win-shadow-deep); border-bottom: 1.5px solid var(--win-shadow-deep);
 }
-.floating-title {
-    background: linear-gradient(90deg, #ffb7c5, #f48fb1);
-    color: white; font-size: 11px; padding: 2px 4px; font-weight: bold;
-}
+.floating-title { background: linear-gradient(90deg, #ffb7c5, #f48fb1); color: white; font-size: 11px; padding: 2px 4px; font-weight: bold; }
 .floating-content { padding: 5px; display: flex; flex-direction: column; gap: 5px; }
 select { font-size: 11px; border: 1px solid var(--win-shadow-deep); background: white; width: 100%; color: var(--win-shadow-deep); }
 .font-styles { display: flex; gap: 2px; }
@@ -158,41 +149,13 @@ select { font-size: 11px; border: 1px solid var(--win-shadow-deep); background: 
 }
 .style-btn.active { border: 1px solid var(--win-shadow-deep); box-shadow: inset 1.5px 1.5px 0px #000; background: #e0e0e0; }
 
-/* --- TEXT TOOL OVERLAY (UPDATED FOR TEXTAREA) --- */
 #text-input-overlay {
-    border: 1.5px dashed var(--win-shadow-deep);
-    background: rgba(255, 255, 255, 0.2); 
-    padding: 2px 4px;
-    outline: none;
-    color: inherit;
-    font-family: inherit;
-    overflow: hidden;
-    cursor: move;
-    resize: none; /* No manual resizing */
-    white-space: pre; /* Essential for keeping spaces and newlines */
+    border: 1.5px dashed var(--win-shadow-deep); background: rgba(255, 255, 255, 0.2); 
+    padding: 2px 4px; outline: none; color: inherit; font-family: inherit; overflow: hidden; cursor: move; resize: none; white-space: pre;
 }
 
-.canvas-frame {
-    padding: 3px;
-    background-color: var(--win-bg);
-    border-top: 1.5px solid var(--win-shadow-deep);
-    border-left: 1.5px solid var(--win-shadow-deep);
-    border-right: 1.5px solid var(--win-white);
-    border-bottom: 1.5px solid var(--win-white);
-}
-
-.canvas-wrapper {
-    background-color: var(--win-shadow); 
-    padding: 4px;
-    position: relative;
-    border-top: 1.5px solid var(--win-shadow-deep);
-    border-left: 1.5px solid var(--win-shadow-deep);
-    border-right: 1.5px solid var(--win-white);
-    border-bottom: 1.5px solid var(--win-white);
-    box-shadow: inset 1px 1px 0px #000;
-    line-height: 0;
-}
-
+.canvas-frame { padding: 3px; background-color: var(--win-bg); border-top: 1.5px solid var(--win-shadow-deep); border-left: 1.5px solid var(--win-shadow-deep); border-right: 1.5px solid var(--win-white); border-bottom: 1.5px solid var(--win-white); }
+.canvas-wrapper { background-color: var(--win-shadow); padding: 4px; position: relative; border-top: 1.5px solid var(--win-shadow-deep); border-left: 1.5px solid var(--win-shadow-deep); border-right: 1.5px solid var(--win-white); border-bottom: 1.5px solid var(--win-white); box-shadow: inset 1px 1px 0px #000; line-height: 0; }
 canvas { display: block; image-rendering: pixelated; background: white; cursor: crosshair; }
 
 .footer { display: flex; padding: 15px; gap: 15px; border-top: 1px solid var(--win-shadow); }
@@ -203,9 +166,12 @@ canvas { display: block; image-rendering: pixelated; background: white; cursor: 
 .palette { display: grid; grid-template-columns: repeat(14, 24px); gap: 2px; }
 .swatch { width: 24px; height: 24px; border: 1px solid var(--win-shadow-deep); box-shadow: inset 1.5px 1.5px 0px var(--win-white); }
 
-.status-bar {
-    height: 30px; font-size: 13px; padding: 0 15px; line-height: 30px; 
-    color: var(--win-shadow-deep); font-weight: bold;
-    border-top: 1.5px solid var(--win-shadow-deep);
-    background: var(--win-bg);
+.status-bar { height: 30px; font-size: 13px; padding: 0 15px; line-height: 30px; color: var(--win-shadow-deep); font-weight: bold; border-top: 1.5px solid var(--win-shadow-deep); background: var(--win-bg); }
+
+.dropdown {
+    display: none; position: absolute; top: 100%; left: 0; z-index: 100;
+    background: var(--win-bg); border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white), 4px 4px 0px rgba(0,0,0,0.1); min-width: 160px;
 }
+.menu-item.active .dropdown { display: block; }
+.dropdown-item { padding: 8px 18px; }
+.dropdown-item:hover { background: var(--accent-pink); color: white; }
