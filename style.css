@@ -2,7 +2,7 @@
     --win-bg: #fce4ec; 
     --win-white: #ffffff;
     --win-shadow: #d8a7b1;
-    --win-shadow-deep: #5d4037; 
+    --win-shadow-deep: #5d4037; /* Soft Deep Cocoa Brown */
     --accent-pink: #ffb7c5;
     --desktop-mint: #e0f2f1;
     --tool-size: 38px;
@@ -12,17 +12,19 @@ body {
     background-color: var(--desktop-mint);
     background-image: radial-gradient(#ffffff 2px, transparent 2px);
     background-size: 30px 30px;
-    font-family: 'Tahoma', sans-serif;
+    font-family: 'Tahoma', 'Arial', sans-serif;
     margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     overflow: hidden;
+    cursor: default;
 }
 
 .window-container { position: relative; padding-top: 35px; }
 
+/* --- DECORATIVE CAT EARS --- */
 .ear {
     position: absolute; top: 0; width: 90px; height: 90px;
     background: var(--win-bg); border: 2.5px solid var(--win-shadow-deep);
@@ -35,10 +37,12 @@ body {
     width: 60px; height: 75px; background: #ffc1cc; border-radius: 50% 50% 0 0;
 }
 
+/* --- THE WINDOW FRAME --- */
 .window {
     background-color: var(--win-bg);
     border: 2.5px solid var(--win-white);
     outline: 1.5px solid var(--win-shadow-deep);
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
     width: fit-content; 
     display: flex;
     flex-direction: column;
@@ -51,23 +55,54 @@ body {
     font-weight: bold;
     color: white;
     font-size: 15px;
+    margin-bottom: 2px;
 }
 
+/* --- MENU BAR & DROPDOWNS --- */
 .menu-bar { font-size: 12px; padding: 2px 0; display: flex; border-bottom: 1px solid var(--win-shadow); margin-bottom: 2px; }
 .menu-item { padding: 3px 15px; cursor: pointer; position: relative; color: var(--win-shadow-deep); font-weight: bold; }
 
-.top-bar-controls { background-color: var(--win-bg); padding: 10px; border-bottom: 1.5px solid var(--win-shadow-deep); }
-.horizontal-tool-settings { display: flex; align-items: center; gap: 12px; background: var(--win-bg); padding: 4px 10px; }
+.dropdown {
+    display: none; position: absolute; top: 100%; left: 0; z-index: 100;
+    background: var(--win-bg); border: 1.5px solid var(--win-shadow-deep);
+    box-shadow: inset 1px 1px 0px var(--win-white), 4px 4px 0px rgba(0,0,0,0.1);
+    min-width: 160px;
+}
+.menu-item.active .dropdown { display: block; }
+.dropdown-item { padding: 8px 18px; color: var(--win-shadow-deep); font-weight: normal; }
+.dropdown-item:hover { background: var(--accent-pink); color: white; }
+
+/* --- TOP BAR CONTROLS --- */
+.top-bar-controls {
+    background-color: var(--win-bg);
+    padding: 10px;
+    border-bottom: 1.5px solid var(--win-shadow-deep);
+}
+
+.horizontal-tool-settings {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--win-bg);
+    padding: 4px 10px;
+}
 
 .size-readout {
-    background: white; padding: 2px 6px; font-size: 12px; font-weight: bold;
-    color: var(--win-shadow-deep); border: 1.5px solid var(--win-shadow-deep);
-    box-shadow: inset 1px 1px 0px #000; min-width: 55px; text-align: center;
+    background: white;
+    padding: 2px 6px;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--win-shadow-deep);
+    border: 1px solid var(--win-shadow-deep);
+    box-shadow: inset 1px 1px 0px #000;
+    min-width: 55px;
+    text-align: center;
 }
 
 .options-label { font-size: 12px; font-weight: bold; color: var(--win-shadow-deep); }
 .divider { width: 2px; height: 20px; background-color: var(--win-shadow); border-right: 1px solid var(--win-white); margin: 0 10px; }
 
+/* --- SLIDER STYLING --- */
 input[type="range"] { -webkit-appearance: none; width: 120px; background: transparent; cursor: pointer; }
 input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 2px; background: var(--win-shadow-deep); border-bottom: 1px solid var(--win-white); }
 input[type="range"]::-webkit-slider-thumb {
@@ -75,24 +110,39 @@ input[type="range"]::-webkit-slider-thumb {
     border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white); margin-top: -9px;
 }
 
+/* --- SIDEBAR & TOOLBAR --- */
 .main-content { display: flex; padding: 15px; gap: 15px; background-color: var(--win-bg); }
 .sidebar-controls { display: flex; flex-direction: column; width: 85px; gap: 10px; }
-.toolbar-frame { padding: 3px; border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white); background-color: var(--win-bg);}
+
+.toolbar-frame {
+    padding: 3px;
+    border: 1.5px solid var(--win-shadow-deep);
+    box-shadow: inset 1px 1px 0px var(--win-white);
+    background-color: var(--win-bg);
+}
+
 .toolbar { display: grid; grid-template-columns: repeat(2, var(--tool-size)); grid-auto-rows: var(--tool-size); gap: 0px; }
 
 .tool {
-    background-color: var(--win-bg); display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer;
-    border: 1px solid var(--win-bg); box-shadow: inset 2px 2px 0px var(--win-white), 1.5px 1.5px 0px var(--win-shadow-deep);
+    background-color: var(--win-bg);
+    display: flex; justify-content: center; align-items: center; 
+    font-size: 24px; cursor: pointer;
+    border: 1px solid var(--win-bg);
+    box-shadow: inset 2px 2px 0px var(--win-white), 1.5px 1.5px 0px var(--win-shadow-deep);
 }
 
 .tool.active {
-    background-image: radial-gradient(rgba(255,255,255,0.8) 25%, transparent 25%), radial-gradient(rgba(255,255,255,0.8) 25%, transparent 25%);
-    background-position: 0 0, 1px 1px; background-size: 2px 2px; border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 2px 2px 0px var(--win-shadow-deep); padding-top: 2px; padding-left: 2px;
+    background-image: radial-gradient(rgba(255,255,255,0.8) 25%, transparent 25%), 
+                      radial-gradient(rgba(255,255,255,0.8) 25%, transparent 25%);
+    background-position: 0 0, 1px 1px; background-size: 2px 2px;
+    border: 1.5px solid var(--win-shadow-deep);
+    box-shadow: inset 2px 2px 0px var(--win-shadow-deep);
+    padding-top: 2px; padding-left: 2px;
 }
 
-/* --- SIDEBAR FONT BOX (REPLACED FLOATING BOX) --- */
+/* --- FONT OPTIONS BOX --- */
 .sidebar-font-box {
-    display: none; /* Toggled by JS */
+    display: none; 
     width: 85px;
     background: var(--win-bg);
     border-top: 1.5px solid var(--win-white);
@@ -106,48 +156,76 @@ input[type="range"]::-webkit-slider-thumb {
     color: white; font-size: 11px; padding: 2px 4px; font-weight: bold;
 }
 .floating-content { padding: 5px; display: flex; flex-direction: column; gap: 5px; }
-select { font-size: 10px; border: 1px solid var(--win-shadow-deep); background: white; width: 100%; }
+select { font-size: 11px; border: 1px solid var(--win-shadow-deep); background: white; width: 100%; color: var(--win-shadow-deep); }
 .font-styles { display: flex; gap: 2px; }
 .style-btn { 
-    flex: 1; font-size: 11px; background: var(--win-bg); cursor: pointer;
+    flex: 1; font-size: 11px; background: var(--win-bg); cursor: pointer; font-weight: bold;
     border-top: 1.5px solid var(--win-white); border-left: 1.5px solid var(--win-white);
     border-right: 1.5px solid var(--win-shadow-deep); border-bottom: 1.5px solid var(--win-shadow-deep);
 }
-.style-btn.active {
-    border: 1px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px #000; background: #e0e0e0;
-}
+.style-btn.active { border: 1px solid var(--win-shadow-deep); box-shadow: inset 1.5px 1.5px 0px #000; background: #e0e0e0; }
 
+/* --- TEXT TOOL OVERLAY --- */
 #text-input-overlay {
-    border: 1px dashed var(--win-shadow-deep); background: transparent; padding: 2px; outline: none; color: inherit; font-family: inherit;
+    border: 1.5px dashed var(--win-shadow-deep);
+    background: rgba(255, 255, 255, 0.2); 
+    padding: 2px 4px;
+    outline: none;
+    color: inherit;
+    font-family: inherit;
+    white-space: nowrap;
+    overflow: visible;
+    cursor: move; /* Draggable indicator */
 }
 
+/* --- CANVAS FRAME --- */
 .canvas-frame {
-    padding: 3px; background-color: var(--win-bg);
-    border-top: 1.5px solid var(--win-shadow-deep); border-left: 1.5px solid var(--win-shadow-deep);
-    border-right: 1.5px solid var(--win-white); border-bottom: 1.5px solid var(--win-white);
+    padding: 3px;
+    background-color: var(--win-bg);
+    border-top: 1.5px solid var(--win-shadow-deep);
+    border-left: 1.5px solid var(--win-shadow-deep);
+    border-right: 1.5px solid var(--win-white);
+    border-bottom: 1.5px solid var(--win-white);
 }
+
 .canvas-wrapper {
-    background-color: var(--win-shadow); padding: 4px; position: relative;
-    border-top: 1.5px solid var(--win-shadow-deep); border-left: 1.5px solid var(--win-shadow-deep);
-    border-right: 1.5px solid var(--win-white); border-bottom: 1.5px solid var(--win-white);
-    box-shadow: inset 1px 1px 0px #000; line-height: 0;
+    background-color: var(--win-shadow); 
+    padding: 4px;
+    position: relative;
+    border-top: 1.5px solid var(--win-shadow-deep);
+    border-left: 1.5px solid var(--win-shadow-deep);
+    border-right: 1.5px solid var(--win-white);
+    border-bottom: 1.5px solid var(--win-white);
+    box-shadow: inset 1px 1px 0px #000;
+    line-height: 0;
 }
+
 canvas { display: block; image-rendering: pixelated; background: white; cursor: crosshair; }
 
+/* --- PALETTE & FOOTER --- */
 .footer { display: flex; padding: 15px; gap: 15px; border-top: 1px solid var(--win-shadow); }
-.current-colors-frame { padding: 3px; border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-shadow-deep), 1.5px 1.5px 0px var(--win-white); }
+
+.current-colors-frame {
+    padding: 3px;
+    border: 1.5px solid var(--win-shadow-deep);
+    box-shadow: inset 1px 1px 0px var(--win-shadow-deep), 1.5px 1.5px 0px var(--win-white);
+}
+
 .current-colors { width: 40px; height: 40px; background: var(--win-bg); position: relative; cursor: pointer; }
 #bg-color-preview { width: 22px; height: 22px; background: white; border: 1.5px solid var(--win-shadow-deep); position: absolute; bottom: 2px; right: 2px; }
 #fg-color-preview { width: 22px; height: 22px; background: black; border: 1.5px solid var(--win-shadow-deep); position: absolute; top: 2px; left: 2px; z-index: 2; }
+
 .palette { display: grid; grid-template-columns: repeat(14, 24px); gap: 2px; }
-.swatch { width: 24px; height: 24px; border: 1px solid var(--win-shadow-deep); box-shadow: inset 1.5px 1.5px 0px var(--win-white); }
-
-.status-bar { height: 30px; font-size: 13px; padding: 0 15px; line-height: 30px; color: var(--win-shadow-deep); font-weight: bold; border-top: 1.5px solid var(--win-shadow-deep); background: var(--win-bg); }
-
-.dropdown {
-    display: none; position: absolute; top: 100%; left: 0; z-index: 100;
-    background: var(--win-bg); border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white), 4px 4px 0px rgba(0,0,0,0.1); min-width: 160px;
+.swatch { 
+    width: 24px; height: 24px; 
+    border: 1px solid var(--win-shadow-deep);
+    box-shadow: inset 1.5px 1.5px 0px var(--win-white);
 }
-.menu-item.active .dropdown { display: block; }
-.dropdown-item { padding: 8px 18px; }
-.dropdown-item:hover { background: var(--accent-pink); color: white; }
+
+/* --- STATUS BAR --- */
+.status-bar {
+    height: 30px; font-size: 13px; padding: 0 15px; line-height: 30px; 
+    color: var(--win-shadow-deep); font-weight: bold;
+    border-top: 1.5px solid var(--win-shadow-deep);
+    background: var(--win-bg);
+}
