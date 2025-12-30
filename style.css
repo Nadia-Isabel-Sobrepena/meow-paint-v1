@@ -53,7 +53,7 @@ body {
     font-size: 15px;
 }
 
-.menu-bar { font-size: 12px; padding: 2px 0; display: flex; border-bottom: 1px solid var(--win-shadow); }
+.menu-bar { font-size: 12px; padding: 2px 0; display: flex; border-bottom: 1px solid var(--win-shadow); margin-bottom: 2px; }
 .menu-item { padding: 3px 15px; cursor: pointer; position: relative; color: var(--win-shadow-deep); font-weight: bold; }
 
 .top-bar-controls { background-color: var(--win-bg); padding: 10px; border-bottom: 1.5px solid var(--win-shadow-deep); }
@@ -76,7 +76,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .main-content { display: flex; padding: 15px; gap: 15px; background-color: var(--win-bg); }
-.sidebar-controls { display: flex; flex-direction: column; width: 85px; position: relative; }
+.sidebar-controls { display: flex; flex-direction: column; width: 85px; gap: 10px; }
 .toolbar-frame { padding: 3px; border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white); background-color: var(--win-bg);}
 .toolbar { display: grid; grid-template-columns: repeat(2, var(--tool-size)); grid-auto-rows: var(--tool-size); gap: 0px; }
 
@@ -90,23 +90,23 @@ input[type="range"]::-webkit-slider-thumb {
     background-position: 0 0, 1px 1px; background-size: 2px 2px; border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 2px 2px 0px var(--win-shadow-deep); padding-top: 2px; padding-left: 2px;
 }
 
-/* --- NEW: FLOATING BOX STYLES --- */
-.floating-box {
-    display: none; /* Only show when Text tool is active */
-    position: absolute;
-    top: 170px; left: 0; width: 85px;
+/* --- SIDEBAR FONT BOX (REPLACED FLOATING BOX) --- */
+.sidebar-font-box {
+    display: none; /* Toggled by JS */
+    width: 85px;
     background: var(--win-bg);
-    border: 2px solid var(--win-white);
-    outline: 1.5px solid var(--win-shadow-deep);
+    border-top: 1.5px solid var(--win-white);
+    border-left: 1.5px solid var(--win-white);
+    border-right: 1.5px solid var(--win-shadow-deep);
+    border-bottom: 1.5px solid var(--win-shadow-deep);
     padding: 2px;
-    z-index: 20;
 }
 .floating-title {
     background: linear-gradient(90deg, #ffb7c5, #f48fb1);
-    color: white; font-size: 10px; padding: 2px 4px; font-weight: bold;
+    color: white; font-size: 11px; padding: 2px 4px; font-weight: bold;
 }
 .floating-content { padding: 5px; display: flex; flex-direction: column; gap: 5px; }
-select { font-size: 10px; border: 1px solid var(--win-shadow-deep); background: white; }
+select { font-size: 10px; border: 1px solid var(--win-shadow-deep); background: white; width: 100%; }
 .font-styles { display: flex; gap: 2px; }
 .style-btn { 
     flex: 1; font-size: 11px; background: var(--win-bg); cursor: pointer;
@@ -117,14 +117,8 @@ select { font-size: 10px; border: 1px solid var(--win-shadow-deep); background: 
     border: 1px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px #000; background: #e0e0e0;
 }
 
-/* --- TEXT OVERLAY INPUT --- */
 #text-input-overlay {
-    border: 1px dashed var(--win-shadow-deep);
-    background: transparent;
-    padding: 2px;
-    outline: none;
-    color: inherit;
-    font-family: inherit;
+    border: 1px dashed var(--win-shadow-deep); background: transparent; padding: 2px; outline: none; color: inherit; font-family: inherit;
 }
 
 .canvas-frame {

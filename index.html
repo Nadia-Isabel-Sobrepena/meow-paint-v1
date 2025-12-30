@@ -43,6 +43,7 @@
 
                 <div class="main-content">
                     <div class="sidebar-controls">
+                        <!-- Toolbar Buttons -->
                         <div class="toolbar-frame">
                             <div class="toolbar" id="toolbar">
                                 <div class="tool active" data-tool="pencil" title="Pencil">✏️</div>
@@ -57,8 +58,8 @@
                             </div>
                         </div>
 
-                        <!-- NEW: Floating Fonts Box (appears for Text Tool) -->
-                        <div id="font-toolbar" class="floating-box">
+                        <!-- FONT OPTIONS (Now appears directly under buttons) -->
+                        <div id="font-toolbar" class="sidebar-font-box">
                             <div class="floating-title">Fonts</div>
                             <div class="floating-content">
                                 <select id="font-family">
@@ -78,7 +79,6 @@
 
                     <div class="canvas-frame">
                         <div class="canvas-wrapper">
-                            <!-- Overlay Input for Text -->
                             <input type="text" id="text-input-overlay" style="display:none; position:absolute; z-index:10;">
                             <canvas id="paintCanvas" width="700" height="450"></canvas>
                         </div>

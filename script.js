@@ -10,7 +10,6 @@ const sizeValueDisplay = document.getElementById('size-value');
 const opacitySlider = document.getElementById('opacity-slider');
 const opacityValueDisplay = document.getElementById('opacity-value');
 
-// --- TEXT TOOL ELEMENTS ---
 const textInput = document.getElementById('text-input-overlay');
 const fontToolbar = document.getElementById('font-toolbar');
 const fontFamilySelect = document.getElementById('font-family');
@@ -19,7 +18,6 @@ const btnItalic = document.getElementById('btn-italic');
 let isBold = false;
 let isItalic = false;
 
-// --- BUFFER CANVAS LOGIC ---
 const bufferCanvas = document.createElement('canvas');
 const bctx = bufferCanvas.getContext('2d');
 bufferCanvas.width = canvas.width;
@@ -63,7 +61,6 @@ window.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); undo(); }
 });
 
-// --- COLOR INDICATOR SWAP ---
 const colorIndicator = document.querySelector('.current-colors');
 colorIndicator.onclick = () => {
     let temp = fgColor; fgColor = bgColor; bgColor = temp;
@@ -71,7 +68,6 @@ colorIndicator.onclick = () => {
     statusBar.innerText = "Colors swapped! 🐾";
 };
 
-// Flood Fill logic...
 function getRgbaFromHex(hex) {
     let c = hex.substring(1).split('');
     if(c.length==3) c=[c[0],c[0],c[1],c[1],c[2],c[2]];
@@ -100,7 +96,6 @@ function floodFill(x, y, fillRgba) {
     ctx.putImageData(imageData, 0, 0);
 }
 
-// Build Palette
 const catColors = ['#000000','#8c7b75','#ff8a80','#ffd180','#a5d6a7','#80deea','#9fa8da','#ce93d8','#f48fb1','#ffffff','#ffcdd2','#f8bbd0','#e1bee7','#d1c4e9','#c5cae9','#bbdefb','#b3e5fc','#b2ebf2','#b2dfdb','#c8e6c9','#dcedc8','#f0f4c3','#fff9c4','#ffecb3','#ffe0b2','#ffccbc','#d7ccc8','#f5f5f5'];
 catColors.forEach(color => {
     const swatch = document.createElement('div');
@@ -115,20 +110,20 @@ catColors.forEach(color => {
 toolbar.onclick = (e) => {
     const btn = e.target.closest('.tool');
     if (btn) {
+        // Commit any pending text when switching tools
+        if (currentTool === 'text') commitText();
+
         document.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
         btn.classList.add('active'); 
         currentTool = btn.dataset.tool;
-        // Toggle Font Toolbar
         fontToolbar.style.display = (currentTool === 'text') ? 'block' : 'none';
-        statusBar.innerText = `Selected: ${currentTool}`;
+        statusBar.innerText = `Selected Tool: ${currentTool}`;
     }
 };
 
-// Font Style Buttons
 btnBold.onclick = () => { isBold = !isBold; btnBold.classList.toggle('active'); };
 btnItalic.onclick = () => { isItalic = !isItalic; btnItalic.classList.toggle('active'); };
 
-// --- DRAWING ENGINE ---
 canvas.onmousedown = (e) => {
     if (currentTool === 'text') {
         saveHistory();
@@ -170,7 +165,8 @@ canvas.onmousemove = (e) => {
     if (!drawing) return;
     ctx.putImageData(snapshot, 0, 0);
     if (['pencil', 'brush', 'eraser'].includes(currentTool)) {
-        bctx.lineTo(e.offsetX, e.offsetY); bctx.stroke();
+        bctx.lineTo(e.offsetX, e.offsetY);
+        bctx.stroke();
     } else if (currentTool === 'line') {
         bctx.clearRect(0,0,bufferCanvas.width,bufferCanvas.height);
         bctx.beginPath(); bctx.moveTo(startX, startY); bctx.lineTo(e.offsetX, e.offsetY); bctx.stroke();
@@ -188,11 +184,8 @@ canvas.onmousemove = (e) => {
 
 window.onmouseup = () => drawing = false;
 
-// --- TEXT TOOL HELPERS ---
 function placeTextInput(x, y) {
-    // Finish any current text
     commitText();
-    
     textInput.style.display = 'block';
     textInput.style.left = (x + 5) + 'px';
     textInput.style.top = (y + 5) + 'px';
@@ -203,8 +196,6 @@ function placeTextInput(x, y) {
     textInput.style.fontStyle = isItalic ? 'italic' : 'normal';
     textInput.value = '';
     textInput.focus();
-    
-    // Save coordinates for the canvas render
     textInput.dataset.x = x;
     textInput.dataset.y = y;
 }
@@ -214,30 +205,24 @@ function commitText() {
         textInput.style.display = 'none';
         return;
     }
-    
     const x = parseInt(textInput.dataset.x);
     const y = parseInt(textInput.dataset.y);
-    
     ctx.globalAlpha = currentOpacity;
     ctx.fillStyle = fgColor;
     let fontStr = '';
     if (isItalic) fontStr += 'italic ';
     if (isBold) fontStr += 'bold ';
     fontStr += `${currentSize}px ${fontFamilySelect.value}`;
-    
     ctx.font = fontStr;
     ctx.textBaseline = 'top';
     ctx.fillText(textInput.value, x + 5, y + 5);
     ctx.globalAlpha = 1.0;
-    
     textInput.style.display = 'none';
     textInput.value = '';
 }
 
-// Enter key to finish typing
 textInput.onkeydown = (e) => { if (e.key === 'Enter') commitText(); };
 
-// --- MENU UI ---
 document.querySelectorAll('.menu-item').forEach(item => {
     item.onclick = (e) => {
         const act = item.classList.contains('active');
@@ -245,9 +230,7 @@ document.querySelectorAll('.menu-item').forEach(item => {
         if (!act) item.classList.add('active'); e.stopPropagation();
     };
 });
-window.onclick = () => {
-    document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
-};
+window.onclick = () => document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
 
 document.getElementById('btn-new').onclick = () => { if(confirm("Clear?")) { saveHistory(); ctx.clearRect(0,0,canvas.width,canvas.height); } };
 document.getElementById('btn-save').onclick = () => { const l = document.createElement('a'); l.download='art.png'; l.href=canvas.toDataURL(); l.click(); };
