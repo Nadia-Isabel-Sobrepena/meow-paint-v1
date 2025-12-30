@@ -1,7 +1,7 @@
 
 # Meow Paint - v1
 
-[https://meow-paint-v1.netlify.app/](https://nadia-isabel-sobrepena.github.io/meow-paint-v1/)
+https://nadia-isabel-sobrepena.github.io/meow-paint-v1/
 
 A cozy, cat-themed recreation of the classic Windows 98 Paint interface.
 
