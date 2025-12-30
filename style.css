@@ -30,6 +30,10 @@ body {
 }
 .ear.left { left: 45px; transform: rotate(-12deg); }
 .ear.right { right: 45px; transform: rotate(12deg); }
+.ear::after {
+    content: ''; position: absolute; top: 15px; left: 15px;
+    width: 60px; height: 75px; background: #ffc1cc; border-radius: 50% 50% 0 0;
+}
 
 .window {
     background-color: var(--win-bg);
@@ -71,9 +75,9 @@ input[type="range"]::-webkit-slider-thumb {
     border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white); margin-top: -9px;
 }
 
-.main-content { display: flex; padding: 15px; gap: 15px; }
+.main-content { display: flex; padding: 15px; gap: 15px; background-color: var(--win-bg); }
 .sidebar-controls { display: flex; flex-direction: column; width: 85px; }
-.toolbar-frame { padding: 3px; border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white); }
+.toolbar-frame { padding: 3px; border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white); background-color: var(--win-bg);}
 .toolbar { display: grid; grid-template-columns: repeat(2, var(--tool-size)); grid-auto-rows: var(--tool-size); gap: 0px; }
 
 .tool {
@@ -86,7 +90,27 @@ input[type="range"]::-webkit-slider-thumb {
     background-position: 0 0, 1px 1px; background-size: 2px 2px; border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 2px 2px 0px var(--win-shadow-deep); padding-top: 2px; padding-left: 2px;
 }
 
-.canvas-wrapper { flex-grow: 0; background-color: white; border: 1.5px solid var(--win-white); box-shadow: inset 2px 2px 0px var(--win-shadow-deep), inset 4px 4px 0px rgba(0,0,0,0.08); }
+/* THE DEEP 3D SUNKEN FRAME FIX */
+.canvas-frame {
+    padding: 3px;
+    background-color: var(--win-bg);
+    border-top: 1.5px solid var(--win-shadow-deep);
+    border-left: 1.5px solid var(--win-shadow-deep);
+    border-right: 1.5px solid var(--win-white);
+    border-bottom: 1.5px solid var(--win-white);
+}
+
+.canvas-wrapper {
+    background-color: var(--win-shadow); /* Shows as the inner recessed edge */
+    padding: 4px;
+    border-top: 1.5px solid var(--win-shadow-deep);
+    border-left: 1.5px solid var(--win-shadow-deep);
+    border-right: 1.5px solid var(--win-white);
+    border-bottom: 1.5px solid var(--win-white);
+    box-shadow: inset 1px 1px 0px #000;
+    line-height: 0;
+}
+
 canvas { display: block; image-rendering: pixelated; background: white; cursor: crosshair; }
 
 .footer { display: flex; padding: 15px; gap: 15px; border-top: 1px solid var(--win-shadow); }

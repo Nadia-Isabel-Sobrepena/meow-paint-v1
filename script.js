@@ -11,8 +11,6 @@ const opacitySlider = document.getElementById('opacity-slider');
 const opacityValueDisplay = document.getElementById('opacity-value');
 
 // --- BUFFER CANVAS LOGIC ---
-// This hidden canvas draws strokes at 100% opacity, 
-// then renders them onto the main canvas at your chosen opacity.
 const bufferCanvas = document.createElement('canvas');
 const bctx = bufferCanvas.getContext('2d');
 bufferCanvas.width = canvas.width;
@@ -112,11 +110,7 @@ canvas.onmousedown = (e) => {
     drawing = true;
     startX = e.offsetX;
     startY = e.offsetY;
-    
-    // Snapshot the canvas before the stroke starts
     snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    
-    // Clear and Setup Buffer
     bctx.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
     bctx.strokeStyle = (e.button === 2) ? bgColor : fgColor;
     bctx.fillStyle = (e.button === 2) ? bgColor : fgColor;
@@ -127,7 +121,6 @@ canvas.onmousedown = (e) => {
         bctx.lineCap = 'round'; bctx.lineJoin = 'round'; bctx.lineWidth = currentSize;
     }
     if (currentTool === 'eraser') { bctx.strokeStyle = '#ffffff'; }
-
     if (currentTool === 'fill') {
         floodFill(startX, startY, getRgbaFromHex(bctx.fillStyle));
         drawing = false; return;
@@ -146,10 +139,7 @@ canvas.onmousedown = (e) => {
 
 canvas.onmousemove = (e) => {
     if (!drawing) return;
-
-    // Redraw snapshot to clean up previous preview frame
     ctx.putImageData(snapshot, 0, 0);
-
     if (['pencil', 'brush', 'eraser'].includes(currentTool)) {
         bctx.lineTo(e.offsetX, e.offsetY);
         bctx.stroke();
@@ -163,8 +153,6 @@ canvas.onmousemove = (e) => {
         bctx.clearRect(0,0,bufferCanvas.width,bufferCanvas.height);
         bctx.beginPath(); let r = Math.abs(e.offsetX - startX); bctx.arc(startX, startY, r, 0, Math.PI * 2); bctx.stroke();
     }
-
-    // Draw the entire buffer stroke onto main canvas with chosen opacity
     ctx.globalAlpha = currentOpacity;
     ctx.drawImage(bufferCanvas, 0, 0);
     ctx.globalAlpha = 1.0;
