@@ -55,58 +55,64 @@ body {
     content: ''; position: absolute; top: 15px; left: 15px;
     width: 60px; height: 75px; background: #ffc1cc; border-radius: 50% 50% 0 0;
 }
+
 .window {
     background-color: var(--win-bg); border: 2.5px solid var(--win-white);
     outline: 1.5px solid var(--win-shadow-deep); width: fit-content; 
     display: flex; flex-direction: column; padding: 2px;
 }
+
 .title-bar {
     background: linear-gradient(90deg, #ffb7c5, #f48fb1);
     padding: 6px 10px; font-weight: bold; color: white; font-size: 15px; margin-bottom: 2px;
 }
+
 .menu-bar { font-size: 12px; padding: 2px 0; display: flex; border-bottom: 1px solid var(--win-shadow); margin-bottom: 2px; }
 .menu-item { padding: 3px 15px; cursor: pointer; position: relative; color: var(--win-shadow-deep); font-weight: bold; }
+
 .top-bar-controls { background-color: var(--win-bg); padding: 10px; border-bottom: 1.5px solid var(--win-shadow-deep); }
 .horizontal-tool-settings { display: flex; align-items: center; gap: 12px; background: var(--win-bg); padding: 4px 10px; }
 
 .size-readout {
     background: white; padding: 2px 6px; font-size: 12px; font-weight: bold;
-    color: var(--win-shadow-deep); border: 1.5px solid var(--win-shadow-deep);
+    color: var(--win-shadow-deep); border: 1px solid var(--win-shadow-deep);
     box-shadow: inset 1px 1px 0px #000; min-width: 55px; text-align: center;
 }
+
 .options-label { font-size: 12px; font-weight: bold; color: var(--win-shadow-deep); }
 .divider { width: 2px; height: 20px; background-color: var(--win-shadow); border-right: 1px solid var(--win-white); margin: 0 10px; }
 
-/* --- SLIDERS (UPDATED FOR FIREFOX LINE FIX) --- */
+/* --- FIXED SLIDERS FOR FIREFOX --- */
 input[type="range"] { 
     -webkit-appearance: none; 
     appearance: none; /* Required for Firefox */
     width: 120px; 
     background: transparent; 
+    border: none; /* Removes default Firefox border */
     cursor: pointer; 
 }
 
-/* The Line - Chrome/Safari */
+/* Track (The Line) - Chrome/Safari */
 input[type="range"]::-webkit-slider-runnable-track { 
     width: 100%; height: 2px; background: var(--win-shadow-deep); border-bottom: 1px solid var(--win-white);
 }
 
-/* The Line - Firefox */
+/* Track (The Line) - Firefox */
 input[type="range"]::-moz-range-track { 
     width: 100%; height: 2px; background: var(--win-shadow-deep); border-bottom: 1px solid var(--win-white);
 }
 
-/* The Knob - Chrome/Safari */
+/* Thumb (The Handle) - Chrome/Safari */
 input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none; height: 18px; width: 10px; background: var(--win-bg);
-    border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white); margin-top: -9px;
+    -webkit-appearance: none; height: 18px; width: 12px; background: var(--win-bg);
+    border: 1px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white); margin-top: -9px;
 }
 
-/* The Knob - Firefox */
+/* Thumb (The Handle) - Firefox */
 input[type="range"]::-moz-range-thumb {
-    height: 18px; width: 10px; background: var(--win-bg);
-    border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white);
-    border-radius: 0; /* Keep it rectangular like 98 */
+    height: 18px; width: 12px; background: var(--win-bg);
+    border: 1px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white);
+    border-radius: 0; /* Forces square shape in Firefox */
 }
 
 .main-content { display: flex; padding: 15px; gap: 15px; background-color: var(--win-bg); }
