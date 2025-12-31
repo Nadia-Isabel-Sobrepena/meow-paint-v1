@@ -21,7 +21,7 @@ body {
     overflow: hidden;
 }
 
-/* --- CENTERED SPLASH SCREEN --- */
+/* Splash Screen */
 #splash-screen {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -34,55 +34,16 @@ body {
     color: white;
     transition: opacity 0.8s ease-out;
 }
-
-.splash-content { 
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-    text-align: center; 
-}
-
-.splash-logo {
-    font-size: 48px;
-    font-weight: bold;
-    color: var(--accent-pink);
-    text-shadow: 2px 2px 0px white;
-    margin-bottom: 5px;
-}
-
+.splash-content { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.splash-logo { font-size: 48px; font-weight: bold; color: var(--accent-pink); text-shadow: 2px 2px 0px white; margin-bottom: 5px; }
 .splash-sub { font-size: 14px; letter-spacing: 2px; margin-bottom: 40px; color: var(--win-shadow); }
+.loading-box { width: 300px; display: flex; flex-direction: column; align-items: center; }
+#loading-text { font-size: 11px; margin-bottom: 8px; font-family: monospace; text-align: center; width: 100%; }
+.progress-container { width: 100%; height: 16px; background: #000; border: 1px solid #888; position: relative; }
+#progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-pink) 0%, var(--win-shadow-deep) 100%); background-size: 15px 100%; }
 
-.loading-box { 
-    width: 300px; 
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-}
-
-#loading-text { 
-    font-size: 11px; 
-    margin-bottom: 8px; 
-    font-family: monospace; 
-    text-align: center; 
-    width: 100%;
-}
-
-.progress-container {
-    width: 100%; height: 16px;
-    background: #000;
-    border: 1px solid #888;
-    position: relative;
-}
-
-#progress-bar {
-    height: 100%; width: 0%;
-    background: linear-gradient(90deg, var(--accent-pink) 0%, var(--win-shadow-deep) 100%);
-    background-size: 15px 100%;
-}
-
-/* --- APP UI --- */
+/* UI Framework */
 .window-container { position: relative; padding-top: 35px; }
-
 .ear {
     position: absolute; top: 0; width: 90px; height: 90px;
     background: var(--win-bg); border: 2.5px solid var(--win-shadow-deep);
@@ -94,38 +55,58 @@ body {
     content: ''; position: absolute; top: 15px; left: 15px;
     width: 60px; height: 75px; background: #ffc1cc; border-radius: 50% 50% 0 0;
 }
-
 .window {
     background-color: var(--win-bg); border: 2.5px solid var(--win-white);
     outline: 1.5px solid var(--win-shadow-deep); width: fit-content; 
     display: flex; flex-direction: column; padding: 2px;
 }
-
 .title-bar {
     background: linear-gradient(90deg, #ffb7c5, #f48fb1);
     padding: 6px 10px; font-weight: bold; color: white; font-size: 15px; margin-bottom: 2px;
 }
-
 .menu-bar { font-size: 12px; padding: 2px 0; display: flex; border-bottom: 1px solid var(--win-shadow); margin-bottom: 2px; }
 .menu-item { padding: 3px 15px; cursor: pointer; position: relative; color: var(--win-shadow-deep); font-weight: bold; }
-
 .top-bar-controls { background-color: var(--win-bg); padding: 10px; border-bottom: 1.5px solid var(--win-shadow-deep); }
 .horizontal-tool-settings { display: flex; align-items: center; gap: 12px; background: var(--win-bg); padding: 4px 10px; }
 
 .size-readout {
     background: white; padding: 2px 6px; font-size: 12px; font-weight: bold;
-    color: var(--win-shadow-deep); border: 1px solid var(--win-shadow-deep);
+    color: var(--win-shadow-deep); border: 1.5px solid var(--win-shadow-deep);
     box-shadow: inset 1px 1px 0px #000; min-width: 55px; text-align: center;
 }
-
 .options-label { font-size: 12px; font-weight: bold; color: var(--win-shadow-deep); }
 .divider { width: 2px; height: 20px; background-color: var(--win-shadow); border-right: 1px solid var(--win-white); margin: 0 10px; }
 
-input[type="range"] { -webkit-appearance: none; width: 120px; background: transparent; cursor: pointer; }
-input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 2px; background: var(--win-shadow-deep); border-bottom: 1px solid var(--win-white); }
+/* --- SLIDERS (UPDATED FOR FIREFOX LINE FIX) --- */
+input[type="range"] { 
+    -webkit-appearance: none; 
+    appearance: none; /* Required for Firefox */
+    width: 120px; 
+    background: transparent; 
+    cursor: pointer; 
+}
+
+/* The Line - Chrome/Safari */
+input[type="range"]::-webkit-slider-runnable-track { 
+    width: 100%; height: 2px; background: var(--win-shadow-deep); border-bottom: 1px solid var(--win-white);
+}
+
+/* The Line - Firefox */
+input[type="range"]::-moz-range-track { 
+    width: 100%; height: 2px; background: var(--win-shadow-deep); border-bottom: 1px solid var(--win-white);
+}
+
+/* The Knob - Chrome/Safari */
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none; height: 18px; width: 10px; background: var(--win-bg);
     border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white); margin-top: -9px;
+}
+
+/* The Knob - Firefox */
+input[type="range"]::-moz-range-thumb {
+    height: 18px; width: 10px; background: var(--win-bg);
+    border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white);
+    border-radius: 0; /* Keep it rectangular like 98 */
 }
 
 .main-content { display: flex; padding: 15px; gap: 15px; background-color: var(--win-bg); }
