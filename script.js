@@ -20,6 +20,15 @@ let isItalic = false;
 let isDraggingText = false;
 let textDragStartX, textDragStartY;
 
+// --- Helper to get mouse coords cross-browser (FIX FOR FIREFOX) ---
+function getMousePos(e) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+        x: Math.floor(e.clientX - rect.left),
+        y: Math.floor(e.clientY - rect.top)
+    };
+}
+
 // --- SPLASH SCREEN LOGIC ---
 window.addEventListener('DOMContentLoaded', () => {
     const splash = document.getElementById('splash-screen');
@@ -139,19 +148,22 @@ toolbar.onclick = (e) => {
 
 // --- DRAWING LOGIC ---
 canvas.onmousedown = (e) => {
-    if (currentTool === 'text') { commitText(); placeTextInput(e.offsetX, e.offsetY); return; }
+    const pos = getMousePos(e);
+    if (currentTool === 'text') { commitText(); placeTextInput(pos.x, pos.y); return; }
     const colorToUse = (e.button === 2) ? bgColor : fgColor;
-    if (currentTool === 'fill') { saveHistory(); floodFill(e.offsetX, e.offsetY, getRgbaFromHex(colorToUse)); return; }
+    if (currentTool === 'fill') { saveHistory(); floodFill(pos.x, pos.y, getRgbaFromHex(colorToUse)); return; }
     saveHistory();
     drawing = true;
-    startX = e.offsetX; startY = e.offsetY;
+    startX = pos.x; startY = pos.y;
     snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
     bctx.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
     bctx.strokeStyle = colorToUse;
     bctx.fillStyle = colorToUse;
     if (currentTool === 'pencil') { bctx.lineCap = 'square'; bctx.lineWidth = Math.max(1, currentSize / 5); } 
     else { bctx.lineCap = 'round'; bctx.lineJoin = 'round'; bctx.lineWidth = currentSize; }
-    if (currentTool === 'eraser') { bctx.strokeStyle = '#ffffff'; }
+    
+    if (currentTool === 'eraser') { bctx.strokeStyle = bgColor; }
+
     if (['pencil', 'brush', 'eraser'].includes(currentTool)) { bctx.beginPath(); bctx.moveTo(startX, startY); }
     if (currentTool === 'stamp') {
         ctx.globalAlpha = currentOpacity; ctx.font = `${currentSize * 4}px serif`;
@@ -160,41 +172,35 @@ canvas.onmousedown = (e) => {
     }
 };
 
-// Use addEventListener for global mouse moves and ups to prevent slider "sticking"
 window.addEventListener('mousemove', (e) => {
     if (isDraggingText) {
-        let newX = e.clientX - textDragStartX;
-        let newY = e.clientY - textDragStartY;
-        textInput.style.left = newX + 'px';
-        textInput.style.top = newY + 'px';
-        textInput.dataset.x = newX; 
-        textInput.dataset.y = newY;
+        textInput.style.left = (e.clientX - textDragStartX) + 'px';
+        textInput.style.top = (e.clientY - textDragStartY) + 'px';
+        textInput.dataset.x = e.clientX - textDragStartX; 
+        textInput.dataset.y = e.clientY - textDragStartY;
     }
-
     if (!drawing) return;
+    const pos = getMousePos(e);
     ctx.putImageData(snapshot, 0, 0);
     if (['pencil', 'brush', 'eraser'].includes(currentTool)) {
-        bctx.lineTo(e.offsetX, e.offsetY);
+        bctx.lineTo(pos.x, pos.y);
         bctx.stroke();
     } else if (currentTool === 'line') {
         bctx.clearRect(0,0,bufferCanvas.width,bufferCanvas.height);
-        bctx.beginPath(); bctx.moveTo(startX, startY); bctx.lineTo(e.offsetX, e.offsetY); bctx.stroke();
+        bctx.beginPath(); bctx.moveTo(startX, startY); bctx.lineTo(pos.x, pos.y); bctx.stroke();
     } else if (currentTool === 'rect') {
         bctx.clearRect(0,0,bufferCanvas.width,bufferCanvas.height);
-        bctx.strokeRect(startX, startY, e.offsetX - startX, e.offsetY - startY);
+        bctx.strokeRect(startX, startY, pos.x - startX, pos.y - startY);
     } else if (currentTool === 'circle') {
         bctx.clearRect(0,0,bufferCanvas.width,bufferCanvas.height);
-        bctx.beginPath(); let r = Math.abs(e.offsetX - startX); bctx.arc(startX, startY, r, 0, Math.PI * 2); bctx.stroke();
+        bctx.beginPath(); bctx.arc(startX, startY, Math.abs(pos.x - startX), 0, Math.PI * 2); bctx.stroke();
     }
     ctx.globalAlpha = currentOpacity;
     ctx.drawImage(bufferCanvas, 0, 0);
     ctx.globalAlpha = 1.0;
 });
 
-window.addEventListener('mouseup', () => {
-    drawing = false;
-    isDraggingText = false;
-});
+window.addEventListener('mouseup', () => { drawing = false; isDraggingText = false; });
 
 function placeTextInput(x, y) {
     textInput.style.display = 'block'; textInput.style.left = x + 'px'; textInput.style.top = y + 'px';
@@ -222,9 +228,7 @@ function commitText() {
 
 textInput.onkeydown = (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { commitText(); } };
 
-// --- FIXED: GLOBAL CLICK-OFF LOGIC ---
 window.addEventListener('mousedown', (e) => {
-    // If we click a range input (slider), don't trigger text commit logic
     if (e.target.type === 'range') return;
     if (e.target !== textInput && e.target !== canvas && !fontToolbar.contains(e.target)) { commitText(); } 
 });
