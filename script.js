@@ -20,12 +20,13 @@ let isItalic = false;
 let isDraggingText = false;
 let textDragStartX, textDragStartY;
 
-// --- Helper to get mouse coords cross-browser (FIX FOR FIREFOX) ---
 function getMousePos(e) {
     const rect = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     return {
-        x: Math.floor(e.clientX - rect.left),
-        y: Math.floor(e.clientY - rect.top)
+        x: Math.floor(clientX - rect.left),
+        y: Math.floor(clientY - rect.top)
     };
 }
 
@@ -97,7 +98,6 @@ function updateLiveTextPreview() {
 }
 textInput.addEventListener('input', updateLiveTextPreview);
 
-// Undo Logic
 let undoStack = [];
 const maxHistory = 20;
 function saveHistory() {
@@ -146,7 +146,6 @@ toolbar.onclick = (e) => {
     }
 };
 
-// --- DRAWING LOGIC ---
 canvas.onmousedown = (e) => {
     const pos = getMousePos(e);
     if (currentTool === 'text') { commitText(); placeTextInput(pos.x, pos.y); return; }
@@ -161,9 +160,7 @@ canvas.onmousedown = (e) => {
     bctx.fillStyle = colorToUse;
     if (currentTool === 'pencil') { bctx.lineCap = 'square'; bctx.lineWidth = Math.max(1, currentSize / 5); } 
     else { bctx.lineCap = 'round'; bctx.lineJoin = 'round'; bctx.lineWidth = currentSize; }
-    
     if (currentTool === 'eraser') { bctx.strokeStyle = bgColor; }
-
     if (['pencil', 'brush', 'eraser'].includes(currentTool)) { bctx.beginPath(); bctx.moveTo(startX, startY); }
     if (currentTool === 'stamp') {
         ctx.globalAlpha = currentOpacity; ctx.font = `${currentSize * 4}px serif`;
@@ -233,7 +230,7 @@ window.addEventListener('mousedown', (e) => {
     if (e.target !== textInput && e.target !== canvas && !fontToolbar.contains(e.target)) { commitText(); } 
 });
 
-// Dropdowns
+// Menu Dropdowns
 document.querySelectorAll('.menu-item').forEach(item => {
     item.onclick = (e) => {
         const act = item.classList.contains('active');
@@ -247,6 +244,12 @@ document.getElementById('btn-new').onclick = () => { if(confirm("Clear?")) { sav
 document.getElementById('btn-save').onclick = () => { const l = document.createElement('a'); l.download='art.png'; l.href=canvas.toDataURL(); l.click(); };
 document.getElementById('btn-undo').onclick = () => undo();
 document.getElementById('btn-meow').onclick = () => alert("MEOW!");
+
+// --- NEW: ABOUT BUTTON ACTION ---
+document.getElementById('btn-about').onclick = () => {
+    alert("Meow Paint v98.cat\n\nA purr-fectly retro drawing tool created with Vibe Coding and a love for kittens! 🐾\n\nCollaborating with AI to bring cat art to life.");
+};
+
 document.getElementById('btn-random-cat').onclick = () => {
     saveHistory(); const cats = ['🐱', '🐈', '😸', '😹', '😻', '😼', '😽', '😾', '😿', '🙀'];
     const x = Math.random() * (canvas.width - 60); const y = 40 + Math.random() * (canvas.height - 60);
