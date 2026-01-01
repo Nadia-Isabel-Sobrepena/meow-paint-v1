@@ -247,7 +247,7 @@ document.getElementById('btn-meow').onclick = () => alert("MEOW!");
 
 // --- NEW: ABOUT BUTTON ACTION ---
 document.getElementById('btn-about').onclick = () => {
-    alert("Meow Paint v98.cat\n\nA purr-fectly retro drawing tool created with Vibe Coding and a love for kittens! 🐾\n\nCollaborating with AI to bring cat art to life.");
+    alert("Meow Paint v98.cat\n\nAn advanced retro-themed illustration suite developed through AI-collaborative 'vibe coding.' This application harmonizes classic legacy aesthetics with modern creative functionality.\n\nDesigned with precision for professional artists and feline enthusiasts alike. 🐾");
 };
 
 document.getElementById('btn-random-cat').onclick = () => {
