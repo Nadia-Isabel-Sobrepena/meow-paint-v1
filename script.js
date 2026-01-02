@@ -20,13 +20,39 @@ let isItalic = false;
 let isDraggingText = false;
 let textDragStartX, textDragStartY;
 
+// --- ZOOM LOGIC ---
+let zoomLevel = 1.0;
+
+function applyZoom() {
+    canvas.style.transform = `scale(${zoomLevel})`;
+    statusBar.innerText = `Zoom Level: ${Math.round(zoomLevel * 100)}% 🐾`;
+}
+
+document.getElementById('btn-zoom-in').onclick = () => {
+    if (zoomLevel < 8) zoomLevel *= 2;
+    applyZoom();
+};
+
+document.getElementById('btn-zoom-out').onclick = () => {
+    if (zoomLevel > 0.25) zoomLevel /= 2;
+    applyZoom();
+};
+
+document.getElementById('btn-zoom-reset').onclick = () => {
+    zoomLevel = 1.0;
+    applyZoom();
+};
+
+// --- Updated Mouse Coords for Zoom Support ---
 function getMousePos(e) {
     const rect = canvas.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    
+    // We divide by the current bounding size vs internal canvas size to handle scale
     return {
-        x: Math.floor(clientX - rect.left),
-        y: Math.floor(clientY - rect.top)
+        x: Math.floor((clientX - rect.left) / (rect.width / canvas.width)),
+        y: Math.floor((clientY - rect.top) / (rect.height / canvas.height))
     };
 }
 
@@ -87,7 +113,7 @@ function updateLiveTextPreview() {
         textInput.style.fontFamily = fontFamilySelect.value;
         textInput.style.fontWeight = isBold ? 'bold' : 'normal';
         textInput.style.fontStyle = isItalic ? 'italic' : 'normal';
-        textInput.style.fontSize = currentSize + "px";
+        textInput.style.fontSize = (currentSize * zoomLevel) + "px"; // Visually scale text input to match
         textInput.style.color = fgColor;
         textInput.style.opacity = currentOpacity;
         textInput.style.height = 'auto';
@@ -98,6 +124,7 @@ function updateLiveTextPreview() {
 }
 textInput.addEventListener('input', updateLiveTextPreview);
 
+// Undo Logic
 let undoStack = [];
 const maxHistory = 20;
 function saveHistory() {
@@ -171,10 +198,11 @@ canvas.onmousedown = (e) => {
 
 window.addEventListener('mousemove', (e) => {
     if (isDraggingText) {
+        const rect = canvas.getBoundingClientRect();
         textInput.style.left = (e.clientX - textDragStartX) + 'px';
         textInput.style.top = (e.clientY - textDragStartY) + 'px';
-        textInput.dataset.x = e.clientX - textDragStartX; 
-        textInput.dataset.y = e.clientY - textDragStartY;
+        textInput.dataset.x = (e.clientX - textDragStartX - 4) / zoomLevel; // Account for padding/zoom
+        textInput.dataset.y = (e.clientY - textDragStartY - 4) / zoomLevel;
     }
     if (!drawing) return;
     const pos = getMousePos(e);
@@ -200,8 +228,16 @@ window.addEventListener('mousemove', (e) => {
 window.addEventListener('mouseup', () => { drawing = false; isDraggingText = false; });
 
 function placeTextInput(x, y) {
-    textInput.style.display = 'block'; textInput.style.left = x + 'px'; textInput.style.top = y + 'px';
-    textInput.dataset.x = x; textInput.dataset.y = y; textInput.value = ''; updateLiveTextPreview(); textInput.focus();
+    const visualX = x * zoomLevel;
+    const visualY = y * zoomLevel;
+    textInput.style.display = 'block'; 
+    textInput.style.left = visualX + 'px'; 
+    textInput.style.top = visualY + 'px';
+    textInput.dataset.x = x; 
+    textInput.dataset.y = y; 
+    textInput.value = ''; 
+    updateLiveTextPreview(); 
+    textInput.focus();
 }
 
 textInput.onmousedown = (e) => {
@@ -213,7 +249,7 @@ textInput.onmousedown = (e) => {
 function commitText() {
     if (textInput.style.display === 'none' || textInput.value === '') { textInput.style.display = 'none'; return; }
     saveHistory();
-    const x = parseInt(textInput.dataset.x); let y = parseInt(textInput.dataset.y);
+    const x = parseFloat(textInput.dataset.x); let y = parseFloat(textInput.dataset.y);
     ctx.globalAlpha = currentOpacity; ctx.fillStyle = fgColor;
     let fontStr = ''; if (isItalic) fontStr += 'italic '; if (isBold) fontStr += 'bold ';
     fontStr += `${currentSize}px ${fontFamilySelect.value}`;
@@ -224,13 +260,12 @@ function commitText() {
 }
 
 textInput.onkeydown = (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { commitText(); } };
-
 window.addEventListener('mousedown', (e) => {
     if (e.target.type === 'range') return;
     if (e.target !== textInput && e.target !== canvas && !fontToolbar.contains(e.target)) { commitText(); } 
 });
 
-// Menu Dropdowns
+// Dropdowns
 document.querySelectorAll('.menu-item').forEach(item => {
     item.onclick = (e) => {
         const act = item.classList.contains('active');
@@ -244,12 +279,9 @@ document.getElementById('btn-new').onclick = () => { if(confirm("Clear?")) { sav
 document.getElementById('btn-save').onclick = () => { const l = document.createElement('a'); l.download='art.png'; l.href=canvas.toDataURL(); l.click(); };
 document.getElementById('btn-undo').onclick = () => undo();
 document.getElementById('btn-meow').onclick = () => alert("MEOW!");
-
-// --- NEW: ABOUT BUTTON ACTION ---
 document.getElementById('btn-about').onclick = () => {
-    alert("Meow Paint v98.cat\n\nAn advanced retro-themed illustration suite developed through AI-collaborative 'vibe coding.' This application harmonizes classic legacy aesthetics with modern creative functionality.\n\nDesigned with precision for professional artists and feline enthusiasts alike. 🐾");
+    alert("Meow Paint v98.cat\n\nAn advanced retro-themed illustration suite developed through AI-collaborative 'vibe coding.'\n\nDesigned with precision for professional artists and feline enthusiasts alike. 🐾");
 };
-
 document.getElementById('btn-random-cat').onclick = () => {
     saveHistory(); const cats = ['🐱', '🐈', '😸', '😹', '😻', '😼', '😽', '😾', '😿', '🙀'];
     const x = Math.random() * (canvas.width - 60); const y = 40 + Math.random() * (canvas.height - 60);
