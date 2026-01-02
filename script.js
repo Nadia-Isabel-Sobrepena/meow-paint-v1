@@ -24,6 +24,7 @@ let textDragStartX, textDragStartY;
 let zoomLevel = 1.0;
 
 function applyZoom() {
+    // We apply scaling to the canvas element
     canvas.style.transform = `scale(${zoomLevel})`;
     statusBar.innerText = `Zoom Level: ${Math.round(zoomLevel * 100)}% 🐾`;
 }
@@ -49,7 +50,8 @@ function getMousePos(e) {
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     
-    // We divide by the current bounding size vs internal canvas size to handle scale
+    // rect.width is the VISUAL width (scaled)
+    // canvas.width is the INTERNAL width (fixed)
     return {
         x: Math.floor((clientX - rect.left) / (rect.width / canvas.width)),
         y: Math.floor((clientY - rect.top) / (rect.height / canvas.height))
@@ -113,7 +115,7 @@ function updateLiveTextPreview() {
         textInput.style.fontFamily = fontFamilySelect.value;
         textInput.style.fontWeight = isBold ? 'bold' : 'normal';
         textInput.style.fontStyle = isItalic ? 'italic' : 'normal';
-        textInput.style.fontSize = (currentSize * zoomLevel) + "px"; // Visually scale text input to match
+        textInput.style.fontSize = (currentSize * zoomLevel) + "px"; 
         textInput.style.color = fgColor;
         textInput.style.opacity = currentOpacity;
         textInput.style.height = 'auto';
@@ -196,14 +198,7 @@ canvas.onmousedown = (e) => {
     }
 };
 
-window.addEventListener('mousemove', (e) => {
-    if (isDraggingText) {
-        const rect = canvas.getBoundingClientRect();
-        textInput.style.left = (e.clientX - textDragStartX) + 'px';
-        textInput.style.top = (e.clientY - textDragStartY) + 'px';
-        textInput.dataset.x = (e.clientX - textDragStartX - 4) / zoomLevel; // Account for padding/zoom
-        textInput.dataset.y = (e.clientY - textDragStartY - 4) / zoomLevel;
-    }
+canvas.onmousemove = (e) => {
     if (!drawing) return;
     const pos = getMousePos(e);
     ctx.putImageData(snapshot, 0, 0);
@@ -223,21 +218,14 @@ window.addEventListener('mousemove', (e) => {
     ctx.globalAlpha = currentOpacity;
     ctx.drawImage(bufferCanvas, 0, 0);
     ctx.globalAlpha = 1.0;
-});
-
-window.addEventListener('mouseup', () => { drawing = false; isDraggingText = false; });
+};
+window.onmouseup = () => drawing = false;
 
 function placeTextInput(x, y) {
     const visualX = x * zoomLevel;
     const visualY = y * zoomLevel;
-    textInput.style.display = 'block'; 
-    textInput.style.left = visualX + 'px'; 
-    textInput.style.top = visualY + 'px';
-    textInput.dataset.x = x; 
-    textInput.dataset.y = y; 
-    textInput.value = ''; 
-    updateLiveTextPreview(); 
-    textInput.focus();
+    textInput.style.display = 'block'; textInput.style.left = visualX + 'px'; textInput.style.top = visualY + 'px';
+    textInput.dataset.x = x; textInput.dataset.y = y; textInput.value = ''; updateLiveTextPreview(); textInput.focus();
 }
 
 textInput.onmousedown = (e) => {
@@ -245,6 +233,16 @@ textInput.onmousedown = (e) => {
     textDragStartX = e.clientX - textInput.offsetLeft;
     textDragStartY = e.clientY - textInput.offsetTop;
 };
+
+window.addEventListener('mousemove', (e) => {
+    if (isDraggingText) {
+        textInput.style.left = (e.clientX - textDragStartX) + 'px';
+        textInput.style.top = (e.clientY - textDragStartY) + 'px';
+        textInput.dataset.x = (e.clientX - textDragStartX) / zoomLevel; 
+        textInput.dataset.y = (e.clientY - textDragStartY) / zoomLevel;
+    }
+});
+window.addEventListener('mouseup', () => isDraggingText = false);
 
 function commitText() {
     if (textInput.style.display === 'none' || textInput.value === '') { textInput.style.display = 'none'; return; }
@@ -265,7 +263,7 @@ window.addEventListener('mousedown', (e) => {
     if (e.target !== textInput && e.target !== canvas && !fontToolbar.contains(e.target)) { commitText(); } 
 });
 
-// Dropdowns
+// UI
 document.querySelectorAll('.menu-item').forEach(item => {
     item.onclick = (e) => {
         const act = item.classList.contains('active');
