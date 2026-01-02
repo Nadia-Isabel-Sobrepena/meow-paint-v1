@@ -21,7 +21,7 @@ body {
     overflow: hidden;
 }
 
-/* Splash Screen */
+/* --- CENTERED SPLASH SCREEN --- */
 #splash-screen {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -34,16 +34,55 @@ body {
     color: white;
     transition: opacity 0.8s ease-out;
 }
-.splash-content { display: flex; flex-direction: column; align-items: center; text-align: center; }
-.splash-logo { font-size: 48px; font-weight: bold; color: var(--accent-pink); text-shadow: 2px 2px 0px white; margin-bottom: 5px; }
-.splash-sub { font-size: 14px; letter-spacing: 2px; margin-bottom: 40px; color: var(--win-shadow); }
-.loading-box { width: 300px; display: flex; flex-direction: column; align-items: center; }
-#loading-text { font-size: 11px; margin-bottom: 8px; font-family: monospace; text-align: center; width: 100%; }
-.progress-container { width: 100%; height: 16px; background: #000; border: 1px solid #888; position: relative; }
-#progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-pink) 0%, var(--win-shadow-deep) 100%); background-size: 15px 100%; }
 
-/* UI Framework */
+.splash-content { 
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    text-align: center; 
+}
+
+.splash-logo {
+    font-size: 48px;
+    font-weight: bold;
+    color: var(--accent-pink);
+    text-shadow: 2px 2px 0px white;
+    margin-bottom: 5px;
+}
+
+.splash-sub { font-size: 14px; letter-spacing: 2px; margin-bottom: 40px; color: var(--win-shadow); }
+
+.loading-box { 
+    width: 300px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+}
+
+#loading-text { 
+    font-size: 11px; 
+    margin-bottom: 8px; 
+    font-family: monospace; 
+    text-align: center; 
+    width: 100%;
+}
+
+.progress-container {
+    width: 100%; height: 16px;
+    background: #000;
+    border: 1px solid #888;
+    position: relative;
+}
+
+#progress-bar {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--accent-pink) 0%, var(--win-shadow-deep) 100%);
+    background-size: 15px 100%;
+}
+
+/* --- APP UI --- */
 .window-container { position: relative; padding-top: 35px; }
+
 .ear {
     position: absolute; top: 0; width: 90px; height: 90px;
     background: var(--win-bg); border: 2.5px solid var(--win-shadow-deep);
@@ -85,34 +124,30 @@ body {
 /* --- FIXED SLIDERS FOR FIREFOX --- */
 input[type="range"] { 
     -webkit-appearance: none; 
-    appearance: none; /* Required for Firefox */
+    appearance: none; 
     width: 120px; 
     background: transparent; 
-    border: none; /* Removes default Firefox border */
+    border: none; 
     cursor: pointer; 
 }
 
-/* Track (The Line) - Chrome/Safari */
 input[type="range"]::-webkit-slider-runnable-track { 
     width: 100%; height: 2px; background: var(--win-shadow-deep); border-bottom: 1px solid var(--win-white);
 }
 
-/* Track (The Line) - Firefox */
 input[type="range"]::-moz-range-track { 
     width: 100%; height: 2px; background: var(--win-shadow-deep); border-bottom: 1px solid var(--win-white);
 }
 
-/* Thumb (The Handle) - Chrome/Safari */
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none; height: 18px; width: 12px; background: var(--win-bg);
-    border: 1px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white); margin-top: -9px;
+    border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white); margin-top: -9px;
 }
 
-/* Thumb (The Handle) - Firefox */
 input[type="range"]::-moz-range-thumb {
-    height: 18px; width: 12px; background: var(--win-bg);
-    border: 1px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white);
-    border-radius: 0; /* Forces square shape in Firefox */
+    height: 18px; width: 10px; background: var(--win-bg);
+    border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white);
+    border-radius: 0; 
 }
 
 .main-content { display: flex; padding: 15px; gap: 15px; background-color: var(--win-bg); }
@@ -153,7 +188,15 @@ select { font-size: 11px; border: 1px solid var(--win-shadow-deep); background: 
 
 .canvas-frame { padding: 3px; background-color: var(--win-bg); border-top: 1.5px solid var(--win-shadow-deep); border-left: 1.5px solid var(--win-shadow-deep); border-right: 1.5px solid var(--win-white); border-bottom: 1.5px solid var(--win-white); }
 .canvas-wrapper { background-color: var(--win-shadow); padding: 4px; position: relative; border-top: 1.5px solid var(--win-shadow-deep); border-left: 1.5px solid var(--win-shadow-deep); border-right: 1.5px solid var(--win-white); border-bottom: 1.5px solid var(--win-white); box-shadow: inset 1px 1px 0px #000; line-height: 0; }
-canvas { display: block; image-rendering: pixelated; background: white; cursor: crosshair; }
+
+/* UPDATED FOR ZOOM: */
+canvas { 
+    display: block; 
+    image-rendering: pixelated; 
+    background: white; 
+    cursor: crosshair; 
+    transform-origin: top left; /* Vital for correct zoom alignment */
+}
 
 .footer { display: flex; padding: 15px; gap: 15px; border-top: 1px solid var(--win-shadow); }
 .current-colors-frame { padding: 3px; border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-shadow-deep), 1.5px 1.5px 0px var(--win-white); }
