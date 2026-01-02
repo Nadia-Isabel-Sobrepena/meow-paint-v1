@@ -21,7 +21,7 @@ body {
     overflow: hidden;
 }
 
-/* --- CENTERED SPLASH SCREEN --- */
+/* Splash Screen */
 #splash-screen {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -34,55 +34,16 @@ body {
     color: white;
     transition: opacity 0.8s ease-out;
 }
-
-.splash-content { 
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-    text-align: center; 
-}
-
-.splash-logo {
-    font-size: 48px;
-    font-weight: bold;
-    color: var(--accent-pink);
-    text-shadow: 2px 2px 0px white;
-    margin-bottom: 5px;
-}
-
+.splash-content { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.splash-logo { font-size: 48px; font-weight: bold; color: var(--accent-pink); text-shadow: 2px 2px 0px white; margin-bottom: 5px; }
 .splash-sub { font-size: 14px; letter-spacing: 2px; margin-bottom: 40px; color: var(--win-shadow); }
+.loading-box { width: 300px; display: flex; flex-direction: column; align-items: center; }
+#loading-text { font-size: 11px; margin-bottom: 8px; font-family: monospace; text-align: center; width: 100%; }
+.progress-container { width: 100%; height: 16px; background: #000; border: 1px solid #888; position: relative; }
+#progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-pink) 0%, var(--win-shadow-deep) 100%); background-size: 15px 100%; }
 
-.loading-box { 
-    width: 300px; 
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-}
-
-#loading-text { 
-    font-size: 11px; 
-    margin-bottom: 8px; 
-    font-family: monospace; 
-    text-align: center; 
-    width: 100%;
-}
-
-.progress-container {
-    width: 100%; height: 16px;
-    background: #000;
-    border: 1px solid #888;
-    position: relative;
-}
-
-#progress-bar {
-    height: 100%; width: 0%;
-    background: linear-gradient(90deg, var(--accent-pink) 0%, var(--win-shadow-deep) 100%);
-    background-size: 15px 100%;
-}
-
-/* --- APP UI --- */
+/* UI Framework */
 .window-container { position: relative; padding-top: 35px; }
-
 .ear {
     position: absolute; top: 0; width: 90px; height: 90px;
     background: var(--win-bg); border: 2.5px solid var(--win-shadow-deep);
@@ -97,7 +58,8 @@ body {
 
 .window {
     background-color: var(--win-bg); border: 2.5px solid var(--win-white);
-    outline: 1.5px solid var(--win-shadow-deep); width: fit-content; 
+    outline: 1.5px solid var(--win-shadow-deep); 
+    width: 860px; /* Stable width so it doesn't grow when zooming */
     display: flex; flex-direction: column; padding: 2px;
 }
 
@@ -114,40 +76,24 @@ body {
 
 .size-readout {
     background: white; padding: 2px 6px; font-size: 12px; font-weight: bold;
-    color: var(--win-shadow-deep); border: 1px solid var(--win-shadow-deep);
+    color: var(--win-shadow-deep); border: 1.5px solid var(--win-shadow-deep);
     box-shadow: inset 1px 1px 0px #000; min-width: 55px; text-align: center;
 }
 
 .options-label { font-size: 12px; font-weight: bold; color: var(--win-shadow-deep); }
 .divider { width: 2px; height: 20px; background-color: var(--win-shadow); border-right: 1px solid var(--win-white); margin: 0 10px; }
 
-/* --- FIXED SLIDERS FOR FIREFOX --- */
-input[type="range"] { 
-    -webkit-appearance: none; 
-    appearance: none; 
-    width: 120px; 
-    background: transparent; 
-    border: none; 
-    cursor: pointer; 
-}
-
-input[type="range"]::-webkit-slider-runnable-track { 
-    width: 100%; height: 2px; background: var(--win-shadow-deep); border-bottom: 1px solid var(--win-white);
-}
-
-input[type="range"]::-moz-range-track { 
-    width: 100%; height: 2px; background: var(--win-shadow-deep); border-bottom: 1px solid var(--win-white);
-}
-
+/* Fixed Slider Styles for Firefox/Chrome */
+input[type="range"] { -webkit-appearance: none; appearance: none; width: 120px; background: transparent; cursor: pointer; border: none; }
+input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 2px; background: var(--win-shadow-deep); border-bottom: 1px solid var(--win-white); }
+input[type="range"]::-moz-range-track { width: 100%; height: 2px; background: var(--win-shadow-deep); border-bottom: 1px solid var(--win-white); }
 input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none; height: 18px; width: 12px; background: var(--win-bg);
+    -webkit-appearance: none; height: 18px; width: 10px; background: var(--win-bg);
     border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white); margin-top: -9px;
 }
-
 input[type="range"]::-moz-range-thumb {
     height: 18px; width: 10px; background: var(--win-bg);
-    border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white);
-    border-radius: 0; 
+    border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white); border-radius: 0;
 }
 
 .main-content { display: flex; padding: 15px; gap: 15px; background-color: var(--win-bg); }
@@ -186,18 +132,33 @@ select { font-size: 11px; border: 1px solid var(--win-shadow-deep); background: 
     padding: 2px 4px; outline: none; color: inherit; font-family: inherit; overflow: hidden; cursor: move; resize: none; white-space: pre;
 }
 
-.canvas-frame { padding: 3px; background-color: var(--win-bg); border-top: 1.5px solid var(--win-shadow-deep); border-left: 1.5px solid var(--win-shadow-deep); border-right: 1.5px solid var(--win-white); border-bottom: 1.5px solid var(--win-white); }
-.canvas-wrapper { background-color: var(--win-shadow); padding: 4px; position: relative; border-top: 1.5px solid var(--win-shadow-deep); border-left: 1.5px solid var(--win-shadow-deep); border-right: 1.5px solid var(--win-white); border-bottom: 1.5px solid var(--win-white); box-shadow: inset 1px 1px 0px #000; line-height: 0; }
-
-/* UPDATED FOR ZOOM: */
-canvas { 
-    display: block; 
-    image-rendering: pixelated; 
-    background: white; 
-    cursor: crosshair; 
-    transform-origin: top left; /* Vital for correct zoom alignment */
+/* --- THE VIEWPORT FIX --- */
+.canvas-frame { 
+    padding: 3px; background-color: var(--win-bg); 
+    border-top: 1.5px solid var(--win-shadow-deep); border-left: 1.5px solid var(--win-shadow-deep); 
+    border-right: 1.5px solid var(--win-white); border-bottom: 1.5px solid var(--win-white); 
 }
 
+.canvas-wrapper { 
+    background-color: var(--win-shadow); 
+    position: relative; border-top: 1.5px solid var(--win-shadow-deep); 
+    border-left: 1.5px solid var(--win-shadow-deep); border-right: 1.5px solid var(--win-white); 
+    border-bottom: 1.5px solid var(--win-white); box-shadow: inset 1px 1px 0px #000; line-height: 0; 
+    
+    width: 710px;  /* FIXED VIEWPORT WIDTH */
+    height: 460px; /* FIXED VIEWPORT HEIGHT */
+    overflow: auto; /* Enable scrollbars when zoomed in */
+    display: grid; 
+    place-items: center; /* Center the canvas when it's small (Zoomed out) */
+}
+
+canvas { 
+    display: block; image-rendering: pixelated; background: white; cursor: crosshair; 
+    transform-origin: center center; /* Zoom from center */
+    transition: transform 0.1s ease;
+}
+
+/* Palette & Footer */
 .footer { display: flex; padding: 15px; gap: 15px; border-top: 1px solid var(--win-shadow); }
 .current-colors-frame { padding: 3px; border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-shadow-deep), 1.5px 1.5px 0px var(--win-white); }
 .current-colors { width: 40px; height: 40px; background: var(--win-bg); position: relative; cursor: pointer; }
