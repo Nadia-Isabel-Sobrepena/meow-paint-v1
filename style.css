@@ -76,24 +76,40 @@ body {
 
 .size-readout {
     background: white; padding: 2px 6px; font-size: 12px; font-weight: bold;
-    color: var(--win-shadow-deep); border: 1.5px solid var(--win-shadow-deep);
+    color: var(--win-shadow-deep); border: 1px solid var(--win-shadow-deep);
     box-shadow: inset 1px 1px 0px #000; min-width: 55px; text-align: center;
 }
 
 .options-label { font-size: 12px; font-weight: bold; color: var(--win-shadow-deep); }
 .divider { width: 2px; height: 20px; background-color: var(--win-shadow); border-right: 1px solid var(--win-white); margin: 0 10px; }
 
-/* Fixed Slider Styles for Firefox/Chrome */
-input[type="range"] { -webkit-appearance: none; appearance: none; width: 120px; background: transparent; cursor: pointer; border: none; }
-input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 2px; background: var(--win-shadow-deep); border-bottom: 1px solid var(--win-white); }
-input[type="range"]::-moz-range-track { width: 100%; height: 2px; background: var(--win-shadow-deep); border-bottom: 1px solid var(--win-white); }
+/* --- FIXED SLIDERS FOR FIREFOX/CHROME --- */
+input[type="range"] { 
+    -webkit-appearance: none; 
+    appearance: none; 
+    width: 120px; 
+    background: transparent; 
+    border: none; 
+    cursor: pointer; 
+}
+
+input[type="range"]::-webkit-slider-runnable-track { 
+    width: 100%; height: 2px; background: var(--win-shadow-deep); border-bottom: 1px solid var(--win-white);
+}
+
+input[type="range"]::-moz-range-track { 
+    width: 100%; height: 2px; background: var(--win-shadow-deep); border-bottom: 1px solid var(--win-white);
+}
+
 input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none; height: 18px; width: 10px; background: var(--win-bg);
+    -webkit-appearance: none; height: 18px; width: 12px; background: var(--win-bg);
     border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white); margin-top: -9px;
 }
+
 input[type="range"]::-moz-range-thumb {
     height: 18px; width: 10px; background: var(--win-bg);
-    border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white); border-radius: 0;
+    border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-white);
+    border-radius: 0; 
 }
 
 .main-content { display: flex; padding: 15px; gap: 15px; background-color: var(--win-bg); }
@@ -132,13 +148,7 @@ select { font-size: 11px; border: 1px solid var(--win-shadow-deep); background: 
     padding: 2px 4px; outline: none; color: inherit; font-family: inherit; overflow: hidden; cursor: move; resize: none; white-space: pre;
 }
 
-/* --- THE VIEWPORT FIX --- */
-.canvas-frame { 
-    padding: 3px; background-color: var(--win-bg); 
-    border-top: 1.5px solid var(--win-shadow-deep); border-left: 1.5px solid var(--win-shadow-deep); 
-    border-right: 1.5px solid var(--win-white); border-bottom: 1.5px solid var(--win-white); 
-}
-
+.canvas-frame { padding: 3px; background-color: var(--win-bg); border-top: 1.5px solid var(--win-shadow-deep); border-left: 1.5px solid var(--win-shadow-deep); border-right: 1.5px solid var(--win-white); border-bottom: 1.5px solid var(--win-white); }
 .canvas-wrapper { 
     background-color: var(--win-shadow); 
     position: relative; border-top: 1.5px solid var(--win-shadow-deep); 
@@ -147,18 +157,17 @@ select { font-size: 11px; border: 1px solid var(--win-shadow-deep); background: 
     
     width: 710px;  /* FIXED VIEWPORT WIDTH */
     height: 460px; /* FIXED VIEWPORT HEIGHT */
-    overflow: auto; /* Enable scrollbars when zoomed in */
+    overflow: auto; 
     display: grid; 
-    place-items: center; /* Center the canvas when it's small (Zoomed out) */
+    place-items: center; 
 }
 
 canvas { 
     display: block; image-rendering: pixelated; background: white; cursor: crosshair; 
-    transform-origin: center center; /* Zoom from center */
+    transform-origin: center center; 
     transition: transform 0.1s ease;
 }
 
-/* Palette & Footer */
 .footer { display: flex; padding: 15px; gap: 15px; border-top: 1px solid var(--win-shadow); }
 .current-colors-frame { padding: 3px; border: 1.5px solid var(--win-shadow-deep); box-shadow: inset 1px 1px 0px var(--win-shadow-deep), 1.5px 1.5px 0px var(--win-white); }
 .current-colors { width: 40px; height: 40px; background: var(--win-bg); position: relative; cursor: pointer; }
