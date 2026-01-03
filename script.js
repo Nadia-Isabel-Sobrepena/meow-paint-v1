@@ -22,36 +22,18 @@ let textDragStartX, textDragStartY;
 
 // --- ZOOM LOGIC ---
 let zoomLevel = 1.0;
-
 function applyZoom() {
-    // We apply scaling to the canvas element
     canvas.style.transform = `scale(${zoomLevel})`;
     statusBar.innerText = `Zoom Level: ${Math.round(zoomLevel * 100)}% 🐾`;
 }
+document.getElementById('btn-zoom-in').onclick = () => { if (zoomLevel < 8) zoomLevel *= 2; applyZoom(); };
+document.getElementById('btn-zoom-out').onclick = () => { if (zoomLevel > 0.25) zoomLevel /= 2; applyZoom(); };
+document.getElementById('btn-zoom-reset').onclick = () => { zoomLevel = 1.0; applyZoom(); };
 
-document.getElementById('btn-zoom-in').onclick = () => {
-    if (zoomLevel < 8) zoomLevel *= 2;
-    applyZoom();
-};
-
-document.getElementById('btn-zoom-out').onclick = () => {
-    if (zoomLevel > 0.25) zoomLevel /= 2;
-    applyZoom();
-};
-
-document.getElementById('btn-zoom-reset').onclick = () => {
-    zoomLevel = 1.0;
-    applyZoom();
-};
-
-// --- Updated Mouse Coords for Zoom Support ---
 function getMousePos(e) {
     const rect = canvas.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    
-    // rect.width is the VISUAL width (scaled)
-    // canvas.width is the INTERNAL width (fixed)
     return {
         x: Math.floor((clientX - rect.left) / (rect.width / canvas.width)),
         y: Math.floor((clientY - rect.top) / (rect.height / canvas.height))
@@ -93,6 +75,12 @@ let startX, startY, snapshot;
 
 sizeValueDisplay.innerText = currentSize + "px";
 opacityValueDisplay.innerText = "100%";
+
+// --- SLIDER FIX: STOP PROPAGATION FOR FIREFOX ---
+const preventSliderStuck = (e) => e.stopPropagation();
+
+brushSlider.addEventListener('mousedown', preventSliderStuck);
+opacitySlider.addEventListener('mousedown', preventSliderStuck);
 
 brushSlider.addEventListener('input', (e) => {
     currentSize = e.target.value;
@@ -198,7 +186,13 @@ canvas.onmousedown = (e) => {
     }
 };
 
-canvas.onmousemove = (e) => {
+window.addEventListener('mousemove', (e) => {
+    if (isDraggingText) {
+        textInput.style.left = (e.clientX - textDragStartX) + 'px';
+        textInput.style.top = (e.clientY - textDragStartY) + 'px';
+        textInput.dataset.x = (e.clientX - textDragStartX) / zoomLevel; 
+        textInput.dataset.y = (e.clientY - textDragStartY) / zoomLevel;
+    }
     if (!drawing) return;
     const pos = getMousePos(e);
     ctx.putImageData(snapshot, 0, 0);
@@ -218,8 +212,9 @@ canvas.onmousemove = (e) => {
     ctx.globalAlpha = currentOpacity;
     ctx.drawImage(bufferCanvas, 0, 0);
     ctx.globalAlpha = 1.0;
-};
-window.onmouseup = () => drawing = false;
+});
+
+window.addEventListener('mouseup', () => { drawing = false; isDraggingText = false; });
 
 function placeTextInput(x, y) {
     const visualX = x * zoomLevel;
@@ -233,16 +228,6 @@ textInput.onmousedown = (e) => {
     textDragStartX = e.clientX - textInput.offsetLeft;
     textDragStartY = e.clientY - textInput.offsetTop;
 };
-
-window.addEventListener('mousemove', (e) => {
-    if (isDraggingText) {
-        textInput.style.left = (e.clientX - textDragStartX) + 'px';
-        textInput.style.top = (e.clientY - textDragStartY) + 'px';
-        textInput.dataset.x = (e.clientX - textDragStartX) / zoomLevel; 
-        textInput.dataset.y = (e.clientY - textDragStartY) / zoomLevel;
-    }
-});
-window.addEventListener('mouseup', () => isDraggingText = false);
 
 function commitText() {
     if (textInput.style.display === 'none' || textInput.value === '') { textInput.style.display = 'none'; return; }
@@ -258,12 +243,15 @@ function commitText() {
 }
 
 textInput.onkeydown = (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { commitText(); } };
+
+// --- FIXED WINDOW LISTENER FOR FIREFOX ---
 window.addEventListener('mousedown', (e) => {
+    // If we click a range input (slider), don't trigger text commit logic
     if (e.target.type === 'range') return;
     if (e.target !== textInput && e.target !== canvas && !fontToolbar.contains(e.target)) { commitText(); } 
 });
 
-// UI
+// Dropdowns
 document.querySelectorAll('.menu-item').forEach(item => {
     item.onclick = (e) => {
         const act = item.classList.contains('active');
@@ -278,7 +266,7 @@ document.getElementById('btn-save').onclick = () => { const l = document.createE
 document.getElementById('btn-undo').onclick = () => undo();
 document.getElementById('btn-meow').onclick = () => alert("MEOW!");
 document.getElementById('btn-about').onclick = () => {
-    alert("Meow Paint v98.cat\n\nAn advanced retro-themed illustration suite developed through AI-collaborative 'vibe coding.'\n\nDesigned with precision for professional artists and feline enthusiasts alike. 🐾");
+    alert("Meow Paint v98.cat - Professional Illustration Suite\n\nSoftware Specification: This production build provides a high-fidelity creative workspace engineered to emulate legacy system architectures while integrating modern alpha-transparency and coordinate synchronization. Developed via collaborative AI implementation.\n\nProduction Build: v1.0.0 (STABLE)\nCopyright © 2025 Meowsoft Corporation. All paws reserved.");
 };
 document.getElementById('btn-random-cat').onclick = () => {
     saveHistory(); const cats = ['🐱', '🐈', '😸', '😹', '😻', '😼', '😽', '😾', '😿', '🙀'];
